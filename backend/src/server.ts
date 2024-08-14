@@ -60,10 +60,10 @@ socketConfig(server)
 const currentWorkingDir = path.resolve();
 const parentDir = path.dirname(currentWorkingDir);
 
-app.use(express.static(path.join(parentDir, "/frontend/dist")));
+app.use(express.static(path.join(parentDir, '../../frontend/dist')));
 
 app.get("*", (req, res) =>
-  res.sendFile(path.resolve(parentDir, "frontend", "dist", "index.html")))
+  res.sendFile(path.resolve(parentDir, '../../frontend/dist', "index.html")))
 console.log(process.env.PORT)
 server.listen(port, () => {
   console.log(`server started in port ${port}`)
