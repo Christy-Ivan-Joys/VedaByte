@@ -9,12 +9,14 @@ export default class userController {
     this.interactor = interactor;
   }
 
-  async onCreateUser(req: Request, res: Response, next: NextFunction) {
-
+  async onCreateUser(req: Request, res: Response, next: NextFunction){
+    
     try {
+
       const user = req.body
       const data = await this.interactor.createUser(user)
       return res.status(200).json(data)
+
     } catch (error: any) {
       next(error)
     }

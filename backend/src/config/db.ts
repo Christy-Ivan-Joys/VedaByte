@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 dotenv.config()
-console.log('data eneterd')
+console.log(process.env.MONGO_URL)
 export const connectDB=  async()=>{
     try {
         
@@ -13,6 +13,5 @@ export const connectDB=  async()=>{
         console.log('Database connected successfully')
     } catch (error) {
          console.log('error in database connection',error)
-    }
-   
-}
+    }           
+}               
