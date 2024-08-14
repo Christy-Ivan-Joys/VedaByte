@@ -1,0 +1,18 @@
+.main {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: white; 
+    height: 100vh;
+  }
+  .main-layout {
+    display: flex;
+  }
+  .main {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: white; 
+    height: 100vh;
+   margin-left: 250px;
+   transition: margin-left 0.3s;
+   padding-top:10px ;
+  }

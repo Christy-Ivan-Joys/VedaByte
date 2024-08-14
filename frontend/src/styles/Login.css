@@ -1,0 +1,27 @@
+@keyframes slideIn{
+    from {
+        transform: translateY(-20%);
+        opacity: 0;
+    }
+    to{
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+.slide-in{
+    animation: slideIn 1s ease-in;
+}
+@keyframes floating{
+    0%{
+        transform: translateY(0);
+    }
+    50%{
+        transform: translateY(-5px);
+    }
+    100%{
+        transform: translateY(0);
+    }
+}
+.hover\:floating-effect:hover{
+    animation:floating 1s ease infinite
+}   

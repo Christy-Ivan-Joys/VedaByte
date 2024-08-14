@@ -1,0 +1,27 @@
+.main-layout {
+    display: flex;
+  }
+
+  .content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #889cc3; 
+    height: 100vh;
+    flex-grow: 1;
+  }
+  .main-layout {
+    display: flex;
+  }
+  .content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f3f4f6; 
+    height: 100vh;
+   margin-left: 250px;
+   transition: margin-left 0.3s;
+   padding-top:10px ;
+  }
+  .sidebar.collapsed ~ .content{
+    margin-left: 80px;
+  }
+  

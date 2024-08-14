@@ -1,0 +1,23 @@
+@keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  
+  .typing-animation {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0;
+    animation: typing 4s steps(100, end) forwards;
+  }
+  .hover-effect:hover ~ img {
+    transform: scale(1.1);
+  }
+  
+  .hover-effect:hover {
+    cursor: pointer;
+  }
+  
+  img {
+    transition: transform 0.5s ease-in-out;
+  }
+  

@@ -1,0 +1,7 @@
+.navbar{
+    z-index: 2;
+}
+.navbar ul li:hover{
+     color: #0ef;
+     cursor: pointer;
+}

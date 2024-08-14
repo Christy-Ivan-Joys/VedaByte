@@ -1,0 +1,159 @@
+.sidebar {
+    width: 240px;
+    background-color: #030727;
+    color: white;
+    height: 100vh;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-link {
+   
+    background-color: #105c41;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: start;
+    color: white;
+    text-decoration: none;
+
+}
+
+
+
+.sidebar {
+    width: 250px;
+    transition: width 0.3s;
+    background-color: #25AB7C;
+    color: #ecf0f1;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+}
+
+.sidebar.collapsed {
+    width: 85px;
+}
+
+.profile-container {
+    padding: 20px;
+}
+
+.profile-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.sidebar-title {
+    font-size: 1.5em;
+    margin-bottom: 1em;
+    transition: opacity 0.3s;
+}
+
+.sidebar.collapsed .sidebar-title {
+    opacity: 0;
+}
+
+.sidebar-nav {
+    width: 100%;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    color: #ecf0f1;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active-link {
+    background-color: #ffffff;
+    color: black;
+}
+
+.sidebar-link span {
+    margin-left: 10px;
+    transition: opacity 0.3s;
+}
+
+.sidebar.collapsed .sidebar-link span {
+    opacity: 0;
+}
+
+.toggle-button {
+    background: none;
+    border: none;
+    color: #ecf0f1;
+    font-size: 1.5em;
+    font-weight: bolder;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    margin-bottom: 1em;
+    transition: transform 0.3s;
+}
+
+.sidebar.collapsed .toggle-button {
+    transform: rotate(360deg);
+}
+
+.profile-container {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.profile-container:hover .dropdown-menu {
+    display: block;
+}
+
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .dropdown-item {
+    padding: 10px ;
+    text-align: left;
+    text-decoration: none;
+    display: block;
+    color: black;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f1f1f1;
+  }
+
+
