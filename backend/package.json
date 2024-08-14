@@ -5,8 +5,9 @@
   "main": "server.js",
   "scripts": {
     "build":"tsc",
-    "start": "node dist/index.js",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts"
+    "prestart": "tsc",
+    "start": "nodemon src/server.ts",
+    "poststart": "node dist/server.js"
   },
   "keywords": [],
   "author": "",

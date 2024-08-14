@@ -1,0 +1,24 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const adminRepository_1 = require("../repositories/adminRepository");
+const adminInteractor_1 = require("../interactors/adminInteractor");
+const adminController_1 = __importDefault(require("../controllers/adminController"));
+const adminAuthMiddleware_1 = require("../middlewares/adminAuthMiddleware");
+const repository = new adminRepository_1.AdminRepository();
+const interactor = new adminInteractor_1.AdminInteractor(repository);
+const controller = new adminController_1.default(interactor);
+const router = express_1.default.Router();
+router.post('/login', controller.onAdminLogin.bind(controller));
+router.get('/all-students', adminAuthMiddleware_1.adminProtect, controller.studentsData.bind(controller));
+router.get('/all-tutors', adminAuthMiddleware_1.adminProtect, controller.tutorsData.bind(controller));
+router.post('/change-status', adminAuthMiddleware_1.adminProtect, controller.onChangeStatus.bind(controller));
+router.get('/applications', adminAuthMiddleware_1.adminProtect, controller.applications.bind(controller));
+router.post('/course-approval', adminAuthMiddleware_1.adminProtect, controller.onChangeApproval.bind(controller));
+router.post('/add-category', adminAuthMiddleware_1.adminProtect, controller.onCreateCategory.bind(controller));
+router.get('/fetch-categories', adminAuthMiddleware_1.adminProtect, controller.onFetchCategories.bind(controller));
+router.post('/verify-arefresh-token', controller.onRefreshToken.bind(controller));
+exports.default = router;

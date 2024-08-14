@@ -8,11 +8,11 @@
     "moduleResolution": "node",
     "typeRoots": ["node_modules/@types", "src/types"],
     "outDir": "./dist",
-    "rootDir": "./src",
+    // "rootDir": "./src/server.ts",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src"],
+  "include": ["src/server.ts"],
   "exclude": ["node_modules"]
 }

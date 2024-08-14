@@ -8,7 +8,6 @@ import { adminSchema } from "../models/adminSchema"
 export const protect = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
      
     let token = req.cookies.StudentAccessToken
-   // const refreshToken = req.cookies.StudentRefreshToken
     
     if (!token){
         console.log('no access token')
@@ -21,20 +20,16 @@ export const protect = async (req: AuthenticatedRequest, res: Response, next: Ne
         if (decoded && typeof decoded !== 'string' && 'userId' in decoded) {
             Id = decoded.userId
         }
-
         const user = await studentSchema.findById(Id)
-
         if (!user) {
             return res.status(404).json({ message: 'User not found' })
         }
-
         if (user.isBlocked) {
             return res.status(403).json({ message: 'User is blocked' })
         }
         req.body.user = user
         next()
     } catch (error) {
-
         res.status(403).json({ message: 'Invalid token' })
     }
 }
