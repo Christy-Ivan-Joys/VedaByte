@@ -1,5 +1,4 @@
 import { Sidebar } from "./Sidebar"
-import { useSelector } from "react-redux"
 import { FaSearch, FaUser } from "react-icons/fa"
 import { useFetchEnrolledStudentsMutation } from "../../utils/redux/slices/instructorApiSlices"
 import { useEffect, useState } from "react"
@@ -9,14 +8,14 @@ import { Header } from "./Header"
 
 export function Students() {
     const [EnrolledStudents, setEnrolledStudents] = useState([])
-    const instructor = useSelector((state: any) => state.instructorAuth.instructorInfo)
     const [studentsEnrolled] = useFetchEnrolledStudentsMutation()
     const [isLoading, setIsLoading] = useState(false)
     const errorHandler = useErrorHandler()
 
-    const handleFilter = (e: any) => {
-
+    const handleFilter = (letter: any) => {
+        console.log(letter)
     }
+
     useEffect(() => {
 
         const fetchData = async () => {
@@ -25,7 +24,7 @@ export function Students() {
                 const students = await studentsEnrolled(undefined).unwrap()
                 setEnrolledStudents(students)
                 setIsLoading(false)
-                
+
             } catch (error: any) {
 
                 console.log(error)
@@ -43,8 +42,8 @@ export function Students() {
         <div className="main-layout">
             <Sidebar />
             <div className="content">
-            
-                <Header/>
+
+                <Header />
                 <div className="overflow-x-auto p-5 mt-2 py-5 bg-white shadow-xl rounded-lg  ">
 
 

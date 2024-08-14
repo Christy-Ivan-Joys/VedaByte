@@ -33,7 +33,6 @@ export const Chat = () => {
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
     const [audioChunks, setAudioChunks] = useState<Blob[]>([])
     const [audioStream, setAudioStream] = useState<MediaStream | null>(null)
-    const [IsLoading, setIsLoading] = useState(false)
     const [onlineUsers, setOnlineUsers] = useState<any>({});
 
     useEffect(() => {
@@ -107,6 +106,7 @@ export const Chat = () => {
         })
 
         socket.on('typing', (data: { userId: string }) => {
+            console.log(typingTimeout)
             setTypingStatus((prevStatus: any) => ({
                 ...prevStatus,
                 [data.userId]: true,
@@ -164,21 +164,17 @@ export const Chat = () => {
         }
         if (file) {
             try {
-                setIsLoading(true)
                 const formData = new FormData();
                 formData.append("file", file);
                 formData.append('upload_preset', 'vedaByte');
-                setIsLoading(true)
                 const upload = await handlefileUpload(formData);
                 const text = upload.url;
                 const recipient = selectedInstructor
                 const room = `private-${sender?._id}-${selectedInstructor?._id}`;
                 socket.emit('privateMessage', { type, sender, recipient, text, room });
-                setIsLoading(false)
             } catch (error) {
                 console.log(error)
             } finally {
-                setIsLoading(false)
             }
 
         }

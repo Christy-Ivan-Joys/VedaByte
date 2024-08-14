@@ -99,9 +99,7 @@ export const Category = () => {
     const handleCloseModal = () => {
         setModalOpen(false)
     }
-    const handleFilter = () => {
-
-    }
+ 
     return (
         <div className="main-layout">
             <Sidebar />

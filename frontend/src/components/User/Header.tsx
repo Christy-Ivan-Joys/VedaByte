@@ -1,5 +1,4 @@
 import '../../styles/Header.css';
-import logo from '../../../public/images/5582931.png';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';

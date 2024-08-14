@@ -80,7 +80,7 @@ export const EditCourse = () => {
 
     const handleEditSubmit = async () => {
         setValidationErrors(null)
-        const validationErrors = validateCourseForm(formData.name, formData.description, formData.price, formData.module)
+        const validationErrors = validateCourseForm(formData.name, formData.description, formData.price)
         const errors = Object.keys(validationErrors)
         if (errors.length) {
             setValidationErrors(validationErrors)

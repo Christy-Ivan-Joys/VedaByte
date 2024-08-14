@@ -2,11 +2,8 @@ import { useEffect, useState } from "react"
 import { Sidebar } from "./Sidebar"
 import { useChangestatusMutation, useStudentsMutation } from "../../utils/redux/slices/adminApiSlices"
 import { Student } from "../../types"
-import { useNavigate } from "react-router-dom"
 import {FaSearch} from "react-icons/fa"
 import { useErrorHandler } from "./ErrorBoundary"
-import { useDispatch } from "react-redux"
-import { setAdmin } from "../../utils/redux/slices/adminAuthSlice"
 import Header from "./Header"
 export function Students() {
     const [students] = useStudentsMutation()
@@ -15,8 +12,7 @@ export function Students() {
     const [data, setData] = useState<Student[]>([])
     const [filteredData, setfilteredData] = useState<Student[]>([])
     const handleError = useErrorHandler()
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
+ 
     const changeStatus = async (id: string, status: string) => {
         try {
             const role = 'Student'
@@ -65,11 +61,7 @@ export function Students() {
         fetchStudents()
     }, [block])
 
-    const handleLogout = () => {
-        dispatch(setAdmin(null))
-        localStorage.removeItem('token')
-        navigate('/admin/login')
-    }
+
     
     return (
         <div className="main-layout">

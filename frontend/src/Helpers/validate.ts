@@ -31,7 +31,7 @@ export function validatePassword(currentPassword: string, newPassword: string, c
    }
    return null
 }
-export function validateCourseForm(name: string, description: string, price: string,module:any) {
+export function validateCourseForm(name: string, description: string, price: string) {
    let errors: { [key: string]: string } = {}
    const stringRegex = /^(?!\s*$)(?!0+$).+/
    const priceRegex = /^[0-9]+(\.[0-9]{1,2})?$/;
@@ -66,7 +66,7 @@ export function validateSection(title:string,description:string,video:File){
    if (!stringRegex.test(description)) {
        errors.description = 'Enter a valid description'
    }
-   if (video === null) {
+   if (video === null){
        errors.video = 'upload a video to continue'
    } else { 
        if (video instanceof File) {

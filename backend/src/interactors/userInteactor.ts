@@ -131,7 +131,7 @@ export class userInteractor implements iUserInteractor {
             },
             quantity: 1
         }))
-        const stripe = new Stripe('sk_test_51PRoxn078uQI3PpUAU7B6Asc2BoGxyWL5n2Li2JtWTWk9G0HMxYgKlXsqpMAUiDdUsog1G6Kjr8Q1k1ckORUkGbX00VZVZm8I6', { apiVersion: '2024-04-10' })
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2024-04-10' })
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             line_items: product,
@@ -140,7 +140,9 @@ export class userInteractor implements iUserInteractor {
             cancel_url: "http://localhost:3000/success"
 
         })
+        console.log('session idddd')
         return session.id
+        
     }
 
     async enrollCourse(id: string, total: string) {

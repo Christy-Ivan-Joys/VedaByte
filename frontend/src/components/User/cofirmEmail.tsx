@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { useSendOtpMutation } from "../../utils/redux/slices/userApiSlices"
 import { useNavigate } from "react-router-dom"
-import { gmailSchema } from "../../Validation/LoginSchema"
 import { ZodError } from "zod"
 
 
@@ -11,8 +10,6 @@ export function ConfirmEmail() {
     const navigate = useNavigate()
     const handleConfirm = async (e: any) => {
         e.preventDefault()
-        alert(email)
-        // gmailSchema.parse(email)
         const otp = await sendOtp({email}).unwrap()
         console.log(otp)
         localStorage.setItem('secret',otp)

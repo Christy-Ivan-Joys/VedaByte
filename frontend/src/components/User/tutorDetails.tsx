@@ -136,7 +136,7 @@ export const TutorDetails = () => {
                                 count={pages}
                                 shape="rounded"
                                 page={currentPage}
-                                onChange={(event, value) => setCurrentPage(value)}
+                                onChange={(_,value) => setCurrentPage(value)}
                             />
                         </Stack>
                     </div>

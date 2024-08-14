@@ -162,7 +162,7 @@ const Review: React.FC<ReviewProps> = (course) => {
                 count={pages}
                 shape="rounded"
                 page={currentPage}
-                onChange={(event, value) => setCurrentPage(value)}
+                onChange={(_,value) => setCurrentPage(value)}
             />
         </Stack>
 

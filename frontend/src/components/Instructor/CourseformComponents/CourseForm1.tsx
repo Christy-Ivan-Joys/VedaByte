@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react"
 import { CourseFormProps, course1Errors } from "../../../types"
-import Shimmer from "../../utils/Shimmer"
 import { useFetchCategoriesforInstructorMutation } from "../../../utils/redux/slices/instructorApiSlices"
 import { useErrorHandler } from "../../../pages/Instructor/ErrorBoundary"
 
@@ -11,7 +10,7 @@ export const CourseForm1: React.FC<CourseFormProps & { validationErrors: course1
     var validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
     const videoRef = useRef<HTMLInputElement>(null)
     const validVideoTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska', 'video/x-ms-wmv']
-    const levels = ['Easy','Medium','Hard']
+    const levels = ['Easy', 'Medium', 'Hard']
     const [fetchCategoriesforInstructor] = useFetchCategoriesforInstructorMutation()
     const [categories, setCategories] = useState([])
     const handleError = useErrorHandler()
@@ -85,9 +84,8 @@ export const CourseForm1: React.FC<CourseFormProps & { validationErrors: course1
         }
 
         setValidationErrors(errors)
-
+        console.log(formData)
     }, [formData, setValidationErrors])
-    console.log(validationErrors)
 
     return (
         <div>
@@ -113,7 +111,7 @@ export const CourseForm1: React.FC<CourseFormProps & { validationErrors: course1
                         id="category"
                     >
                         <option value="" disabled>Select a category</option>
-                        {categories.map((category:any, index) => (
+                        {categories.map((category: any, index) => (
                             <option key={index} value={category.category}>{category.category}</option>
                         ))}
                     </select>
@@ -124,14 +122,14 @@ export const CourseForm1: React.FC<CourseFormProps & { validationErrors: course1
                     <input className="border-2 border-blue rounded-lg p-2 text-black shadow-lg" type="text" placeholder="Enter your price" onChange={handleChange} value={formData.price} name='price' id="contact" />
                     {validationErrors.price && <p className="text-red-500 text-sm">{validationErrors.price}</p>}
                 </div>
-                 <div className="flex flex-col py-2 px-3">
+                <div className="flex flex-col py-2 px-3">
                     <label className="text-md font-semibold text-black" htmlFor="category">Category</label>
                     <select className="border-2 border-blue rounded-lg p-2 shadow-lg text-black" name="courselevel"
                         onChange={handleChange}
                         value={formData.courselevel}
                         id="category">
                         <option value="" disabled>Select course level</option>
-                        {levels.map((level:any, index) => (
+                        {levels.map((level: any, index) => (
                             <option key={index} value={level}>{level}</option>
                         ))}
                     </select>
@@ -152,13 +150,13 @@ export const CourseForm1: React.FC<CourseFormProps & { validationErrors: course1
                     {validationErrors.Introvideo && <p className="text-red-500 text-sm">{validationErrors.Introvideo}</p>}
                 </div>
             </div>
-          
-                <div className="p-3 flex flex-col">
-                    <label htmlFor="" className="text-md font-semibold">Course thumpnail image</label>
-                    <input type="file" className="border-2 border-gray-300 p-2 shadow-lg rounded-md" name="courseImage" id="courseImage" onChange={handleChange} placeholder="Name of the course" />
-                    {validationErrors.courseImage && <p className="text-red-500 text-sm">{validationErrors.courseImage}</p>}
-                </div>
-          
+
+            <div className="p-3 flex flex-col">
+                <label htmlFor="" className="text-md font-semibold">Course thumpnail image</label>
+                <input type="file" className="border-2 border-gray-300 p-2 shadow-lg rounded-md" name="courseImage" id="courseImage" onChange={handleChange} placeholder="Name of the course" />
+                {validationErrors.courseImage && <p className="text-red-500 text-sm">{validationErrors.courseImage}</p>}
+            </div>
+
         </div>
     )
 }

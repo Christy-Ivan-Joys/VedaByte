@@ -9,7 +9,6 @@ import { Filter } from "../../Helpers/filters";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { Paginate } from "../../Helpers/Pagination";
-import BannerHome from '../../../public/images/BannerHome.jpg'
 import '../../styles/course.css'
 import Slideshow from "./Slideshow";
 import Footer from "./Footer";
@@ -42,7 +41,7 @@ export const Course = () => {
         setSearchWord(e.target.value)
     }
 
-    const onClose = (value: any) => {
+    const onClose = () => {
         setIsOpen(false)
     }
 
@@ -111,7 +110,7 @@ export const Course = () => {
                         count={pages}
                         shape="rounded"
                         page={currentPage}
-                        onChange={(event, value) => setCurrentPage(value)}
+                        onChange={(_,value) => setCurrentPage(value)}
                     />
                 </Stack>
 

@@ -12,22 +12,16 @@ export const ResetPassword = () => {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [updateProfileDetails] = useUpdateProfileDetailsMutation()
     const dispatch = useDispatch()
-    const [isEdit,setisEdit] = useState(false)
     const handleChangePassword = async() => {
         const errorMessages = validatePassword(currentpassword, newpassword, confirmPassword)
         if (errorMessages) {
             toast.error(errorMessages)
             return
         }
-      
-    
-        setisEdit(false)
         const data = {newpassword}
         const update = await updateProfileDetails({ data })
         console.log(update)
         dispatch(setInstructor({ ...update.data }))
-
-
     }
 
     return (

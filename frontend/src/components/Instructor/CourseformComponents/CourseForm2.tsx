@@ -35,7 +35,7 @@ export const CourseForm2: React.FC<CourseFormProps & { validationErrors: course2
         e.preventDefault()
 
         const errorEntries = Object.entries(validationErrors);
-        const firstErrorEntry = errorEntries.find(([key, value]) => value !== '');
+        const firstErrorEntry = errorEntries.find(([_,value]) => value !== '');
         if (firstErrorEntry) {
             const [errorField, errorMessage] = firstErrorEntry;
             toast.error(`Enter valid ${errorField}: ${errorMessage} to add section`);
@@ -97,6 +97,7 @@ export const CourseForm2: React.FC<CourseFormProps & { validationErrors: course2
                 }
             }
         }
+        console.log(formData)
         setValidationErrors(errors)
     }, [setValidationErrors, title, description, video])
 

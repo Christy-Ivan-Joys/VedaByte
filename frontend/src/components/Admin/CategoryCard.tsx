@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { CategoryCardProps } from "../../types"
 
 
@@ -8,7 +7,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ Categories }) => {
     return (
         <div className="p-2">
             {Categories?.length ? (
-                Categories.map((category, index) => (
+                Categories.map((category) => (
                     <div className="mt-3 mb-4" >
                         <div className="flex bg-white rounded-lg shadow-2xl overflow-hidden h-24 gap-10" >
                             <div className="flex-shrink-0 p-4">

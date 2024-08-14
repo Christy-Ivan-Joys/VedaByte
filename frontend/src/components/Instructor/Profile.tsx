@@ -1,4 +1,4 @@
-import { CircularProgress, Box } from '@mui/material'
+import { CircularProgress} from '@mui/material'
 import { Sidebar } from "./Sidebar"
 import { useNavigate } from "react-router-dom"
 import { FaLock, FaUser } from "react-icons/fa"

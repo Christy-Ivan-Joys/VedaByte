@@ -1,11 +1,10 @@
 
 import { Sidebar } from "./Sidebar"
 import { Link } from "react-router-dom"
-import { FaSignOutAlt, FaSearch, FaPlus } from "react-icons/fa"
+import {  FaSearch, FaPlus } from "react-icons/fa"
 import { CourseCard } from "./CourseCard"
 import { useEffect, useState } from "react"
 import { useCoursesMutation } from "../../utils/redux/slices/instructorApiSlices"
-import { Tutor } from "../../types"
 import { useErrorHandler } from "../../pages/Instructor/ErrorBoundary"
 import { Header } from "./Header"
 import { Paginate } from "../../Helpers/Pagination"
@@ -16,7 +15,6 @@ export function Courses() {
     const [courses] = useCoursesMutation()
     const [instructorId, setInstructorId] = useState('')
     const [data, setData] = useState([])
-    const [instructor, setInstructor] = useState<Tutor | any>({})
     const handleError = useErrorHandler()
     const [currentPage, setCurrentPage] = useState(1)
     const [pages, setPages] = useState(0)
@@ -29,7 +27,6 @@ export function Courses() {
                 if (instructorData) {
                     const details = JSON.parse(instructorData)
                     if (details && details._id) {
-                        setInstructor(details)
                         setInstructorId(details._id)
 
                     }
@@ -95,7 +92,7 @@ export function Courses() {
                             count={pages}
                             shape="rounded"
                             page={currentPage}
-                            onChange={(event,value)=>setCurrentPage(value)}
+                            onChange={(_,value)=>setCurrentPage(value)}
                         />
                     </Stack>
                 </div>

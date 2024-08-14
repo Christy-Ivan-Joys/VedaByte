@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
 export default function Otp() {
@@ -9,7 +8,6 @@ export default function Otp() {
     const [originalOtp, setOriginal] = useState<string | null>('')
     const [time, setTimer] = useState(90)
     const [showResend, setShowResend] = useState(false)
-    const { studentInfo } = useSelector((state: any) => state.userAuth)
     const navigate = useNavigate()
     const handleChange = (e: any, index: any) => {
         const value = e.target.value;

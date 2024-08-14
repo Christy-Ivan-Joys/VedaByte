@@ -1,6 +1,5 @@
 import Cookies from "js-cookie";
 import { setUser } from "../utils/redux/slices/userAuthSlice";
-import { useDispatch } from "react-redux";
 import { setInstructor } from "../utils/redux/slices/instructorAuthSlice";
 
 export const reveal = () => {

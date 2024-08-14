@@ -1,6 +1,5 @@
 import { Sidebar } from "./Sidebar"
-import { Link } from "react-router-dom"
-import { FaSignOutAlt, FaSearch, FaUsb, FaUser, FaPaperclip, FaVideo, FaCamera } from "react-icons/fa"
+import { FaSearch, FaUser, FaPaperclip, FaVideo, FaCamera } from "react-icons/fa"
 import { useSelector } from "react-redux"
 import { useErrorHandler } from "../../pages/Instructor/ErrorBoundary"
 import { useFetchEnrolledCoursesStudents } from "../../Helpers/InstructorChat"
@@ -8,7 +7,7 @@ import { useEffect, useState } from "react"
 import socket from "../../utils/SocketIO/SocketIOClient"
 import Cookies from "js-cookie"
 import { useFetchInstructorMessagesMutation } from "../../utils/redux/slices/instructorApiSlices"
-import { getTime, getTimeFromDateTime } from "../../Helpers/data"
+import { getTimeFromDateTime } from "../../Helpers/data"
 import { Header } from "./Header"
 import { handlefileUpload } from "../../Helpers/Cloudinary"
 import Picker, { EmojiClickData } from 'emoji-picker-react';
@@ -27,7 +26,6 @@ export const Chat = () => {
     const [sender, setSender] = useState<any>()
     const [selectedStudent, setSelectedStudent] = useState<any>()
     const students = useFetchEnrolledCoursesStudents(handleError)
-    const [Students, setStudents] = useState(students || [])
     const [fetchInstructorMessages] = useFetchInstructorMessagesMutation()
     const [typingStatus, setTypingStatus] = useState<any>({})
     const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null)
@@ -38,12 +36,10 @@ export const Chat = () => {
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
     const [audioChunks, setAudioChunks] = useState<Blob[]>([])
     const [audioStream, setAudioStream] = useState<MediaStream | null>(null)
-    const [IsLoading, setIsLoading] = useState(false)
-
+    
     useEffect(() => {
 
         if (students && students?.length > 0) {
-            setStudents(students)
             setSelectedStudent(students[0]);
         }
 
@@ -72,7 +68,7 @@ export const Chat = () => {
         }
 
     }, [students, selectedStudent, fetchInstructorMessages]);
-
+ 
     useEffect(() => {
 
         const token = Cookies.get('InstructorAccessToken')
@@ -119,6 +115,7 @@ export const Chat = () => {
             }));
         });
         socket.on('stopTyping', (data: { userId: string }) => {
+            console.log(typingTimeout)
             setTypingStatus((prevStatus: any) => ({
                 ...prevStatus,
                 [data.userId]: false,
@@ -173,21 +170,21 @@ export const Chat = () => {
         }
         if (file) {
             try {
-                setIsLoading(true)
+                
                 const formData = new FormData();
                 formData.append("file", file);
                 formData.append('upload_preset', 'vedaByte');
-                setIsLoading(true)
+               
                 const upload = await handlefileUpload(formData);
                 const text = upload.url;
                 const recipient = selectedStudent
                 const room = `private-${selectedStudent?._id}-${sender?._id}`;
                 socket.emit('privateMessage', { type, sender, recipient, text, room });
-                setIsLoading(false)
+               
             } catch (error) {
                 console.log(error)
             } finally {
-                setIsLoading(false)
+
             }
 
         }

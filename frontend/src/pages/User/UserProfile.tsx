@@ -6,7 +6,7 @@ import { FaLock, FaUser } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
 import { Student } from '../../types'
 import { useNavigate } from 'react-router-dom'
-import { useChangeProfileimageMutation, useEditProfileMutation, useFetchEnrolledCoursesMutation, useSendOtpMutation } from '../../utils/redux/slices/userApiSlices'
+import { useChangeProfileimageMutation, useEditProfileMutation, useSendOtpMutation } from '../../utils/redux/slices/userApiSlices'
 import { toast } from 'react-toastify'
 import { setUser } from '../../utils/redux/slices/userAuthSlice'
 import { useErrorHandler } from './ErrorBoundary'
@@ -28,7 +28,6 @@ export const UserProfile = () => {
     const [contact, setContact] = useState(studentInfo.contact)
     const [editProfile] = useEditProfileMutation()
     const handleError = useErrorHandler()
-    const [fetchEnrolledCourses] = useFetchEnrolledCoursesMutation()
 
     const confirmChangePassword = async () => {
         const email = userDetails?.email

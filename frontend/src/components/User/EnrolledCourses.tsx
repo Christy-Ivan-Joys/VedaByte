@@ -62,7 +62,7 @@ export const EnrolledCourses = () => {
     }, [handleError,currentPage])
 
     const handleFilter = (letter: string) => {
-
+       console.log(letter)
     }
     
     return (
@@ -103,7 +103,7 @@ export const EnrolledCourses = () => {
                                 count={pages}
                                 shape="rounded"
                                 page={currentPage}
-                                onChange={(event, value) => setCurrentPage(value)}
+                                onChange={(_,value) => setCurrentPage(value)}
                             />
                         </Stack>
                     </div>

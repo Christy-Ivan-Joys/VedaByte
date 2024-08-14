@@ -30,6 +30,7 @@ export const Tutors = () => {
                 setTutors(paginatedItems)
                 setPages(totalPages)
             } catch (error: any) {
+                handleError(error.data.message)
                 console.log(error)
             }
         };
@@ -73,7 +74,7 @@ export const Tutors = () => {
                 count={pages}
                 shape="rounded"
                 page={currentPage}
-                onChange={(event, value) => setCurrentPage(value)}
+                onChange={(_, value) => setCurrentPage(value)}
             />
         </Stack>
         <Footer />

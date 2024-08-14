@@ -28,8 +28,8 @@ export const Applications = () => {
         fetchApplications()
     }, [])
 
-    const handleFilter = (e: any) => {
-        
+    const handleFilter = (letter:string) => {
+           console.log(letter)
     }
 
     return (

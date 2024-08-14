@@ -1,6 +1,5 @@
 import '../../styles/sample.css'
 import '../../styles/Home.css'
-import logo from '../../../public/images/5582931.png'
 import { useEffect, useState } from 'react'
 import { FaShoppingBag, FaSearch, FaUser, FaBars } from 'react-icons/fa'
 import { Courses } from './Courses'

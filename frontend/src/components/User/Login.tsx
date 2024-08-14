@@ -5,7 +5,7 @@ import Cookies from "js-cookie"
 import Login2 from '../../../public/images/Login2.jpg'
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from "react"
-import { useLoginMutation, useSendOtpMutation } from "../../utils/redux/slices/userApiSlices"
+import { useLoginMutation} from "../../utils/redux/slices/userApiSlices"
 import LoginSchema from "../../Validation/LoginSchema"
 import { ZodError } from "zod"
 import { useDispatch } from "react-redux"
@@ -28,7 +28,6 @@ export default function Login() {
     const [email, setGmail] = useState('')
     const [password, setPassword] = useState('')
     const [login] = useLoginMutation()
-    const [sendOtp] = useSendOtpMutation()
     const [Errors, setErrors] = useState<ValidationErrors>({})
 
     const dispatch = useDispatch()

@@ -53,11 +53,7 @@ export const Videos = () => {
         setSelectedSection(section)
     }
 
-    const handleProgressUpdateEnd = (title: string) => {
 
-
-
-    }
 
     const handleTimeUpdate = useCallback((e: any) => {
         setCurrentTime(e.currentTarget.currentTime)
@@ -84,11 +80,6 @@ export const Videos = () => {
     const handleLoadedMetadata = (event: React.SyntheticEvent<HTMLVideoElement, Event>) => {
 
         setDuration(event.currentTarget.duration)
-        const secondsTime = event.currentTarget.duration
-        const minutes = Math.floor(secondsTime / 60)
-        const seconds = Math.floor(secondsTime % 60)
-        const time = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
-
     }
     
     return (
@@ -99,7 +90,7 @@ export const Videos = () => {
                 <div className=" flex  justify-center items-center p-3">
                     <div className="w-full h-full flex justify-center items-center">
                         {selectedSection?.videoURL && (
-                            <video key={selectedSection?.videoURL} onEnded={() => handleProgressUpdateEnd(selectedSection._id)} onTimeUpdate={handleTimeUpdate} onLoadedMetadata={handleLoadedMetadata} controls width={900}>
+                            <video key={selectedSection?.videoURL}  onTimeUpdate={handleTimeUpdate} onLoadedMetadata={handleLoadedMetadata} controls width={900}>
                                 <source src={selectedSection?.videoURL} type="video/mp4"/>
                             </video>
                         )}

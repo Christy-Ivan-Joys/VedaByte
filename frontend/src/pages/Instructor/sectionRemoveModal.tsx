@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { DeleteSectionModalProps } from '../../types'
-import Box from '@mui/material/Box';
-import LinearProgress from '@mui/material/LinearProgress';
+
 import { useDeleteSectionMutation } from '../../utils/redux/slices/instructorApiSlices';
 const SectionRemoveModal: React.FC<DeleteSectionModalProps> = ({ onClose, section }) => {
 
-    const [isLoading, setIsLoading] = useState(false)
     const [deleteSection] = useDeleteSectionMutation()
     const handleDelete = async () => {
         const sectionId =section._id
-        alert(sectionId)
         const response = await deleteSection({sectionId}).unwrap()
-        
+        console.log(response)
         onClose()
     }
 
@@ -27,16 +24,12 @@ const SectionRemoveModal: React.FC<DeleteSectionModalProps> = ({ onClose, sectio
                     >
                         Cancel
                     </button>
-                    {isLoading ? (
-                        <Box sx={{ width: '100%' }}>
-                            <LinearProgress />
-                        </Box>
-                    ) : (
+            
                         <button className="bg-zinc-600 border-2 border-red-500 text-white px-6  rounded" onClick={handleDelete}
                         >
                             Confirm
                         </button>
-                    )}
+                    
 
                 </div>
             </div>
