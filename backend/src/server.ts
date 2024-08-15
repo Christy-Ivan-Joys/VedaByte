@@ -1,5 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
+import path from 'path'
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import userRouter from './routes/userRoutes'
 import { connectDB } from './config/db'
 import instructorRouter from './routes/instructorRoutes'
@@ -12,7 +14,6 @@ import cors from 'cors'
 import errorHandler from './middlewares/errorHandler'
 import { createServer } from 'http'
 import { socketConfig } from './socketio'
-import path from 'path'
 declare module "express-session" {
   interface SessionData {
     otp: string;
@@ -20,7 +21,6 @@ declare module "express-session" {
   }
 }
 
-dotenv.config()
 const app = express()
 
 const server = createServer(app)
@@ -46,7 +46,7 @@ app.use(session({
   },
 }));
 
-
+     
 const port = process.env.PORT
 connectDB()
 
