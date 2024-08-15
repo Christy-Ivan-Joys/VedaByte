@@ -14,7 +14,6 @@ import { createServer } from 'http'
 import { socketConfig } from './socketio'
 import path from 'path'
 declare module "express-session" {
-
   interface SessionData {
     otp: string;
     token: string;
@@ -57,13 +56,12 @@ app.use('/api/admin', adminRoutes)
 app.use(errorHandler)
 
 socketConfig(server)
-const currentWorkingDir = path.resolve();
-const parentDir = path.dirname(currentWorkingDir);
 
-app.use(express.static(path.join(parentDir, '../../frontend/dist')));
+
+app.use(express.static(path.join(__dirname, '../../frontend/dist')));
 
 app.get("*", (req, res) =>
-  res.sendFile(path.resolve(parentDir, '../../frontend/dist', "index.html")))
+  res.sendFile(path.resolve(__dirname, '../../frontend/dist/index.html')))
 console.log(process.env.PORT)
 server.listen(port, () => {
   console.log(`server started in port ${port}`)
