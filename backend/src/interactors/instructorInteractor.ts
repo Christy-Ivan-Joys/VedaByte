@@ -61,15 +61,17 @@ export class instructorInteractor implements instructorInteractorInterface {
         return course
     }
     async allCourses(input: string): Promise<any | Array<course>> {
-        const data = await this.repository.fetchCourses(input)
-        return data
+        const data:any = await this.repository.fetchCourses(input)
+        const sortedData = data.sort((a:any, b:any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        console.log(sortedData)
+        return sortedData
     }
     async updateProfileImage(imageURL: string, user: any) {
         const instructorId = user._id
         const update = await this.repository.update(instructorId, { profileImage: imageURL })
         return update
-
     }
+
     async updateProfileDetails(user: any, details: any) {
 
         const userId = user._id
@@ -137,6 +139,7 @@ export class instructorInteractor implements instructorInteractorInterface {
             module: data.module
         }
         const update = await this.repository.updateCourse(id, { $set: updateData })
+        console.log(update)
         return update
     }
 
@@ -195,8 +198,8 @@ export class instructorInteractor implements instructorInteractorInterface {
             const revenue = coursePrice * course.count
             return total+revenue
         },0)
-        return {enrollments,total,instructorCourses}
-        // const courseEnrollments = await this.repository.         
+        const enrollmentDetails = await this.repository.getEnrollmentDetailsByCourseIds(courseIds);
+        return {enrollments,total,instructorCourses,enrollmentDetails}
     }
 
 }

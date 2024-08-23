@@ -32,5 +32,8 @@ router.get('/inst-courses/:id',protect,controller.onGetInstructorCourses.bind(co
 router.post('/review-course',protect,controller.onPostCourseReview.bind(controller))
 router.get('/reviews/:id',controller.onGetReviews.bind(controller))
 router.post('/cancel-enrollment',protect,controller.onCancelEnrollment.bind(controller))
+router.post('/create-wallet-intent',protect,controller.onCreateWalletAddIntent.bind(controller))
+router.post('/add-to-wallet',protect,controller.onAddtoWallet.bind(controller))
+router.get('/wallet-transactions',protect,controller.onGetWalletTransactions.bind(controller))
 export default router
               

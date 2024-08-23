@@ -24,6 +24,8 @@ import Certificate from '../components/User/Certificate'
 import { Tutors } from '../components/User/Tutors'
 import { TutorDetails } from '../components/User/tutorDetails'
 import CancelPurchase from '../components/User/CancelPurchase'
+import Transactions from '../components/User/Transactions'
+import PurchaseDetails from '../components/User/PurchaseDetails'
 
 export default function StudentRoutes() {
     return (
@@ -54,6 +56,8 @@ export default function StudentRoutes() {
                 <Route path='/tutors' element={<Tutors />}></Route>
                 <Route path='/tutorDetails/:id' element={<TutorDetails />}></Route>
                 <Route path='/cancelPurchase/:id' element={<CancelPurchase/>}></Route>
+                <Route path='/transactions' element={<Transactions/>}></Route>
+                <Route path='/purchaseDetails/:id' element={<PurchaseDetails/>}></Route>
             </Routes>
         </ErrorBoundary>
     )

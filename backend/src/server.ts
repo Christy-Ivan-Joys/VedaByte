@@ -14,6 +14,7 @@ import cors from 'cors'
 import errorHandler from './middlewares/errorHandler'
 import { createServer } from 'http'
 import { socketConfig } from './socketio'
+
 declare module "express-session" {
   interface SessionData {
     otp: string;
@@ -22,7 +23,6 @@ declare module "express-session" {
 }
 
 const app = express()
-
 const server = createServer(app)
 
 app.use(express.json())
@@ -59,7 +59,6 @@ socketConfig(server)
 
 
 app.use(express.static(path.join(__dirname, '../../frontend/dist')));
-
 app.get("*", (req, res) =>
   res.sendFile(path.resolve(__dirname, '../../frontend/dist/index.html')))
 console.log(process.env.PORT)

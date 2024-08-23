@@ -31,7 +31,9 @@ export interface iUserInteractor {
     cancelEnrollment(data:any):Promise<any>
     updateUser(id: string, data: any): void
     deleteUser(id: string): void
-    getUser(id: string): void
-  
+    getUser(id: string):void
+    makeWalletIntent(amount:number):Promise<any>
+    addMoneyToWallet(amount:number,userId:string):Promise<user | null>
+    allWalletTransactions():Promise<any>
 }
 

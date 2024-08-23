@@ -34,7 +34,6 @@ export const Chat = () => {
     const [audioChunks, setAudioChunks] = useState<Blob[]>([])
     const [audioStream, setAudioStream] = useState<MediaStream | null>(null)
     const [onlineUsers, setOnlineUsers] = useState<any>({});
-
     useEffect(() => {
         if (data && data.length > 0) {
             setInstructors(data);
@@ -48,8 +47,7 @@ export const Chat = () => {
                 const Instructor = selectedInstructor?._id
                 if (Instructor) {
                     const getAllMessages = await fetchAllMessages(Instructor).unwrap()
-                    // const sortedMessages = [...getAllMessages.Messages].sort((a: any, b: any) => parseTime(a.Time) - parseTime(b.Time));
-                    setMessages(getAllMessages)
+                    setMessages(getAllMessages.group)
                 }
             } catch (error: any) {
                 if (error.data.message === 'No messages found') {
@@ -96,8 +94,7 @@ export const Chat = () => {
                     type: message.type
                 }
                 const updatedMessages = [...prevMessages['Messages'] || [], newMessage]
-                // updatedMessages.sort((a: any, b: any) => a.TimeforSorting - b.TimeforSorting)
-                // updatedMessages.forEach((item) => delete item.TimeforSorting)
+            
                 return {
                     ...prevMessages,
                     ['Messages']: updatedMessages
@@ -119,13 +116,11 @@ export const Chat = () => {
                 [data.userId]: false,
             }));
         })
-
         return () => {
             socket.off('Authorized')
             socket.off('Unauthorized')
             socket.off('privateMessage')
         }
-
     }, [data, Instructors, useFetchEnrolledCoursesTutors, setMessages,socket])
 
     const sendMessage = (recipient: any) => {
@@ -155,6 +150,7 @@ export const Chat = () => {
             }, 2000)
         );
     }
+
     const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement> | Blob, type: string) => {
         let file: File | Blob | undefined;
         if (event instanceof Blob) {
@@ -218,6 +214,7 @@ export const Chat = () => {
             }
         }
     };
+    console.log(messages)
     return (
         <>
             <Header />
@@ -251,7 +248,6 @@ export const Chat = () => {
                                                 Typing...
                                             </span>
                                         )}
-
                                     </div>
                                 ))
                             ) : (
@@ -262,14 +258,12 @@ export const Chat = () => {
                             <div className="flex flex-col justify-between border-2 border-gray-200  w-full ">
                                 <div className="flex justify-start items-center border-2 border-sky-100 shadow-md  h-16 p-3 gap-5">
                                     <img src={selectedInstructor?.profileImage} className="w-10 h-10 rounded-full bg-black" alt="" />
-
                                     <p>{selectedInstructor?.name}</p>
                                     {onlineUsers[selectedInstructor?._id] === 'online' && (
                                         <span className="top-10 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
                                     )}
                                 </div>
                                 <div className=" flex flex-col-reverse w-full h-full bg-zinc-900  overflow-y-auto">
-
                                     {Object.keys(messages).length > 0 ? (
                                         Object.keys(messages).map((userId, index) => (
                                             <div key={index} className="">

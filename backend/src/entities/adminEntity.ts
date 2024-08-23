@@ -6,4 +6,4 @@ export class admin{
     public readonly email:string,
     public readonly password:string,
   ){}
-}
+}                        

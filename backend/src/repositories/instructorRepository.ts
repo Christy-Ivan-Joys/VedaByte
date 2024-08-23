@@ -8,6 +8,7 @@ import { categorySchema } from "../models/categorySchema";
 import mongoose from "mongoose";
 import { chatSchema } from "../models/chatSchema";
 import { enrollment } from "../entities/enrollmentEntity";
+import { enrollmentSchema } from "../models/enrollmentSchema";
 const { ObjectId } = mongoose.Types;
 
 
@@ -19,12 +20,14 @@ export class instructorRepository implements instructorRepositoryInterface {
     private studentdb: typeof studentSchema
     private categorydb: typeof categorySchema
     private messagedb: typeof chatSchema
+    private enrollmentdb :typeof enrollmentSchema
     constructor() {
         this.db = instructorSchema
         this.coursedb = courseSchema
         this.studentdb = studentSchema
         this.categorydb = categorySchema
         this.messagedb = chatSchema
+        this.enrollmentdb = enrollmentSchema
     }
 
     async create({ name, email, contact, password, googleUserId, profileImage }: instructor): Promise<instructor | null | any> {
@@ -83,6 +86,7 @@ export class instructorRepository implements instructorRepositoryInterface {
 
     async updateCourse(id: string, data: any) {
         const result = await this.coursedb.findOneAndUpdate({ _id: id },data,{ new: true })
+        console.log(result)
         return result
     }
 
@@ -120,5 +124,57 @@ export class instructorRepository implements instructorRepositoryInterface {
               }
           ]);
           return enrollments;
+    }
+   async getEnrollmentDetailsByCourseIds(courseIds: any): Promise<any> {
+         const data = await this.enrollmentdb.aggregate([
+            { 
+                $match: { 'EnrolledCourses.courseId': { $in: courseIds } } 
+            },
+            { 
+                $unwind: "$EnrolledCourses" 
+            },
+            { 
+                $match: { 'EnrolledCourses.courseId': { $in: courseIds } } 
+            },
+            {
+                $lookup: {
+                    from: 'courses',
+                    localField: 'EnrolledCourses.courseId',
+                    foreignField: '_id',
+                    as: 'courseDetails'
+                }
+            },
+            { 
+                $unwind: "$courseDetails" 
+            },
+            {
+                $lookup: {
+                    from: 'students',
+                    localField: 'student',
+                    foreignField: '_id',
+                    as: 'studentDetails'
+                }
+            },
+            { 
+                $unwind: "$studentDetails" 
+
+            },
+            {
+                $project: {
+                    _id: 0,
+                    studentId: "$studentDetails._id",
+                    studentName: "$studentDetails.name",
+                    enrollmentDate: "$EnrolledCourses.EnrolledAt",
+                    courseId: "$courseDetails._id",
+                    title: "$courseDetails.name",
+                    courseImage:"$courseDetails.courseImage",
+                    price: "$courseDetails.price",
+                    progress: "$EnrolledCourses.Progress",
+                    completed: "$EnrolledCourses.completed",
+                    status: "$EnrolledCourses.status"
+                }
+            }
+         ]).exec()
+         return data
     }
 }    

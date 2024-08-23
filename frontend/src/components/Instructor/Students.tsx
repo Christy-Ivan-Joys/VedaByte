@@ -26,15 +26,10 @@ export function Students() {
                 setIsLoading(false)
 
             } catch (error: any) {
-
-                console.log(error)
                 errorHandler(error.data.message)
             }
-
-
         }
         fetchData()
-
     }, [])
 
     return (

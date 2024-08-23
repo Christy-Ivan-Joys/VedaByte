@@ -8,7 +8,6 @@ import { adminAuthReducer } from "../slices/adminAuthSlice";
 const store  = configureStore({
     reducer:{
         [userApiSlices.reducerPath]:userApiSlices.reducer,
-
         userAuth:userAuthReducer,
         instructorAuth:instructorAuthReducer,
         adminAuth:adminAuthReducer,
@@ -16,3 +15,5 @@ const store  = configureStore({
   middleware:(getDefaultMiddleware)=>getDefaultMiddleware().concat(apiSlice.middleware)
 })
 export default store
+
+

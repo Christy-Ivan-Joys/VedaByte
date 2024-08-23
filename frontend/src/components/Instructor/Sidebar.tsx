@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom"
 import '../../styles/Sidebar.css'
 import { useState } from "react"
 
-import { FaTachometerAlt, FaUserGraduate, FaUser, FaGoogle, FaBook, FaComments } from "react-icons/fa"
+import { FaTachometerAlt, FaUserGraduate, FaUser, FaGoogle, FaBook, FaComments, FaPeopleArrows } from "react-icons/fa"
 import { useSelector } from "react-redux";
 
 export function Sidebar() {
@@ -58,6 +58,16 @@ export function Sidebar() {
                     >
                         <FaBook />
                         {isExpanded ? <span className="flex justify-between">Courses</span> : ''}
+                    </Link>
+
+                </div>
+                <div className=""  >
+                    <Link
+                        to="/instructor/enrollments"
+                        className={`sidebar-link ${location.pathname === '/instructor/enrollments' || location.pathname === '/instructor/enrollments' ? 'active-link' : ''}`}
+                    >
+                        <FaPeopleArrows />
+                        {isExpanded ? <span className="flex justify-between">Enrollments</span> : ''}
                     </Link>
 
                 </div>

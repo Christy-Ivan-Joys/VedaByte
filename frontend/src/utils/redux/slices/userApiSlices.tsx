@@ -10,8 +10,8 @@ export const userApiSlices = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: data,
             })
-        }),
-        
+        }), 
+
         login: builder.mutation({
             query: (data) => ({
                 url: `${STUDENT_URL}/login`,
@@ -69,99 +69,119 @@ export const userApiSlices = apiSlice.injectEndpoints({
                 body: data,
             })
         }),
-        editProfile:builder.mutation({
-            query:(data)=>({
-                url:`${STUDENT_URL}/edit-profile`,
-                method:'POST',
-                body:data
+        editProfile: builder.mutation({
+            query: (data) => ({
+                url: `${STUDENT_URL}/edit-profile`,
+                method: 'POST',
+                body: data
             })
         }),
 
-        verifyStudentRefreshToken:builder.mutation({
-            query:()=>({
-                url:`${STUDENT_URL}/verify-rtoken`,
-                method:'POST',
+        verifyStudentRefreshToken: builder.mutation({
+            query: () => ({
+                url: `${STUDENT_URL}/verify-rtoken`,
+                method: 'POST',
             })
         }),
 
-        removeCartItem:builder.mutation({
-            query:(data)=>({
-                url:`${STUDENT_URL}/remove`,
-                method:'DELETE',
-                body:data
+        removeCartItem: builder.mutation({
+            query: (data) => ({
+                url: `${STUDENT_URL}/remove`,
+                method: 'DELETE',
+                body: data
             })
         }),
-        fetchEnrolledCourses:builder.mutation({
-            query:()=>({
-                url:`${STUDENT_URL}/enrolled-courses`,
-                method:'GET',
+        fetchEnrolledCourses: builder.mutation({
+            query: () => ({
+                url: `${STUDENT_URL}/enrolled-courses`,
+                method: 'GET',
             })
         }),
-        updateCourseProgress:builder.mutation({
-            query:(data)=>({
-                url:`${STUDENT_URL}/updateCourseProgress`,
-                method:'PATCH',
-                body:data
+        updateCourseProgress: builder.mutation({
+            query: (data) => ({
+                url: `${STUDENT_URL}/updateCourseProgress`,
+                method: 'PATCH',
+                body: data
             })
         }),
-        fetchStudentEnrollments:builder.mutation({
-            query:()=>({
-                url:`${STUDENT_URL}/student-enrollments`,
-                method:'GET'
+        fetchStudentEnrollments: builder.mutation({
+            query: () => ({
+                url: `${STUDENT_URL}/student-enrollments`,
+                method: 'GET'
             })
         }),
 
-        fetchCategories:builder.mutation({
-            query:()=>({
-                url:`${STUDENT_URL}/categories`,
-                method:'GET',
+        fetchCategories: builder.mutation({
+            query: () => ({
+                url: `${STUDENT_URL}/categories`,
+                method: 'GET',
             })
         }),
-        updateProgress:builder.mutation({
-            query:(data)=>({
-                url:`${STUDENT_URL}/progress`,
-                method:'PATCH',
-                body:data
+        updateProgress: builder.mutation({
+            query: (data) => ({
+                url: `${STUDENT_URL}/progress`,
+                method: 'PATCH',
+                body: data
             })
         }),
-        fetchAllMessages:builder.mutation({
-            query:(InstructorId)=>({
-                url:`${STUDENT_URL}/messages/${InstructorId}`,
-                method:'GET',
+        fetchAllMessages: builder.mutation({
+            query: (InstructorId) => ({
+                url: `${STUDENT_URL}/messages/${InstructorId}`,
+                method: 'GET',
             })
         }),
-        Instructors:builder.mutation({
-           query:()=>({
-            url:`${STUDENT_URL}/instructors`,
-            method:'GET',
-           })
-        }),
-        fetchInstructorCourses:builder.mutation({
-            query:(InstructorId)=>({
-                url:`${STUDENT_URL}/inst-courses/${InstructorId}`,
-                method:'GET',
+        Instructors: builder.mutation({
+            query: () => ({
+                url: `${STUDENT_URL}/instructors`,
+                method: 'GET',
             })
         }),
-        submitcourseReview:builder.mutation({
-             query:(data)=>({
-                url:`${STUDENT_URL}/review-course`,
-                method:'POST',
-                body:data
-             })
-        }),
-        reviews:builder.mutation({
-            query:(courseId)=>({
-               url:`${STUDENT_URL}/reviews/${courseId}`,
-               method:'GET',
+        fetchInstructorCourses: builder.mutation({
+            query: (InstructorId) => ({
+                url: `${STUDENT_URL}/inst-courses/${InstructorId}`,
+                method: 'GET',
             })
-       }),
-       cancelEnrollment:builder.mutation({
-        query:(data)=>({
-            url:`${STUDENT_URL}/cancel-enrollment`,
-            method:'POST',
-            body:data
+        }),
+        submitcourseReview: builder.mutation({
+            query: (data) => ({
+                url: `${STUDENT_URL}/review-course`,
+                method: 'POST',
+                body: data
+            })
+        }),
+        reviews: builder.mutation({
+            query: (courseId) => ({
+                url: `${STUDENT_URL}/reviews/${courseId}`,
+                method: 'GET',
+            })
+        }),
+        cancelEnrollment: builder.mutation({
+            query: (data) => ({
+                url: `${STUDENT_URL}/cancel-enrollment`,
+                method: 'POST',
+                body: data
+            })
+        }),
+        createWalletAddIntent: builder.mutation({
+            query: (data) => ({
+                url: `${STUDENT_URL}/create-wallet-intent`,
+                method: 'POST',
+                body: data
+            })
+        }),
+        addMoneytoWallet: builder.mutation({
+            query: (data) => ({
+                url: `${STUDENT_URL}/add-to-wallet`,
+                method: 'POST',
+                body: data
+            })
+        }),
+        walletTransactions: builder.mutation({
+            query: () => ({
+                url: `${STUDENT_URL}/wallet-transactions`,
+                method: 'GET',
+            })
         })
-       })
     })
 })
 
@@ -171,8 +191,8 @@ export const {
     useSendOtpMutation,
     useFetchCoursesMutation,
     useAddToCartMutation,
-    useCheckoutMutation, 
-    useEnrollMutation, 
+    useCheckoutMutation,
+    useEnrollMutation,
     useChangePasswordMutation,
     useChangeProfileimageMutation,
     useEditProfileMutation,
@@ -188,5 +208,8 @@ export const {
     useFetchInstructorCoursesMutation,
     useSubmitcourseReviewMutation,
     useReviewsMutation,
-    useCancelEnrollmentMutation
+    useCancelEnrollmentMutation,
+    useCreateWalletAddIntentMutation,
+    useAddMoneytoWalletMutation,
+    useWalletTransactionsMutation
 } = userApiSlices 

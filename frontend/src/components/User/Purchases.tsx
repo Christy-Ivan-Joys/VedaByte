@@ -18,14 +18,13 @@ export const Purchases = () => {
     const cardsPerPage = 4
 
     useEffect(() => {
-
         const Enrollments = async () => {
             try {
                 const enrollments = await fetchStudentEnrollments(undefined).unwrap()
                 const { totalPages, paginatedItems } = Paginate(enrollments, currentPage, cardsPerPage)
                 setPages(totalPages)
                 setPurchases(paginatedItems)
-            }catch(error: any){
+            }catch(error:any){
                 const message = error.data.message
                 handleError(message)
             }

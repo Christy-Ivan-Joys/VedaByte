@@ -13,12 +13,12 @@ export class user {
         public readonly enrollments:mongoose.Types.ObjectId[],
         public readonly reviews:mongoose.Types.ObjectId[],
         public readonly isBlocked: boolean,
+        public readonly wallet:number,
         public readonly contact?: string | null,
         public readonly password?: string | null,
         public readonly googleUserId?: String | null,
         public readonly profileImage?: string | null,
         public readonly status?: string | null,
-        
     ) {}
 }
 

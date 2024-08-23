@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Header from "./Header"
 import { CourseCard } from "./CourseCard";
 import { useFetchCategoriesMutation, useFetchCoursesMutation } from "../../utils/redux/slices/userApiSlices";
@@ -47,33 +47,43 @@ export const Course = () => {
 
     useEffect(() => {
         const getData = async () => {
-            const Courses = await fetchCourses(undefined).unwrap()
-            if (Courses) {
-                setCoursesData(Filter(Courses, filterOptions, searchWord))
+            try {
+                const Courses = await fetchCourses(undefined).unwrap();
+                if (Courses){
+                    const filteredCourses = Filter(Courses, filterOptions, searchWord);
+                    setCoursesData(filteredCourses);
+                }
+            } catch (error: any) {
+                handleError(error?.data?.message);
             }
-            const { paginatedItems, totalPages } = Paginate(courses, currentPage, coursePerPage)
-            setPaginateCourses(paginatedItems)
-            setPages(totalPages)
-        }
-
+        };
+    
         const getCategories = async () => {
             try {
-                const categories = await fetchCategories(undefined).unwrap()
-                setCategories(categories)
+                const categories = await fetchCategories(undefined).unwrap();
+                setCategories(categories);
             } catch (error: any) {
-                handleError(error?.data?.message)
+                handleError(error?.data?.message);
             }
-        }
-        getCategories()
-        getData()
-
-    }, [searchWord, filterOptions, currentPage, paginatedCourses])
+        };
+    
+        getCategories();
+        getData();
+    }, [filterOptions, searchWord]);
+    
+    const paginatedData = useMemo(() => {
+        return Paginate(courses, currentPage, coursePerPage);
+    }, [courses, currentPage, coursePerPage]);
+    
+    useEffect(() => {
+        const { paginatedItems, totalPages } = paginatedData;
+        setPaginateCourses(paginatedItems);
+        setPages(totalPages);
+    }, [paginatedData]);
 
     useEffect(() => {
         setCoursesData(Filter(courses, filterOptions, searchWord));
     }, [filterOptions, searchWord])
-
-
 
     return (
         <div className="overflow-hidden">

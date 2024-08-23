@@ -15,25 +15,28 @@ const courseModel = new mongoose.Schema({
     courselevel: {
         type: String
     },
-    price:{
-        type:String
+    price: {
+        type: String
     },
-    isApproved:{
-        type:String,
-        default:'pending'
+    isApproved: {
+        type: String,
+        default: 'pending'
     },
     courseImage: {
         type: String
     },
-    Introvideo:{
-         type:String
+    Introvideo: {
+        type: String
     },
     InstructorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Instructor',
         required: true
     },
-    
+    createdAt: {
+        type: Date,
+        default: Date.now, // Use a function to get the current date/time
+    },
     module: [
         {
             title: {
@@ -49,7 +52,7 @@ const courseModel = new mongoose.Schema({
                 type: String
             }
         }
-    ]
+    ],
 
 })
 

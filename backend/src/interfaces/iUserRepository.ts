@@ -26,6 +26,6 @@ export interface iUserRepository {
     addCourseReview(data:any):Promise<courseReview>
     fetchReviews(courseId:string):Promise<courseReview[]>
     findEnrollment(enrollmentId:string):Promise<enrollment | null>
-    enrollmentsUpdate(enrollmentId:string,data:any):Promise<enrollment | null>
-    
+    enrollmentsUpdate(enrollmentId:string,data:any,options:any):Promise<enrollment | null>
+    // updateEnrollmentCancel(data:any):Promise<any>
 }   

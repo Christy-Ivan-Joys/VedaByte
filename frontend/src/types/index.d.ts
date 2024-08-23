@@ -202,7 +202,8 @@ interface EnrolledCourse {
     courseId: mongoose.Types.ObjectId,
     Progress: number,
     completed: boolean,
-    EnrolledAt: string
+    EnrolledAt: string,
+    status:boolean
 }
 export interface Enrollment {
 
@@ -254,3 +255,6 @@ export interface AddSectionModalProps{
         course:Course
       }>;
   }
+  export type WalletModalProps = {
+    setAddMoneyModal: (isOpen: boolean) => void;
+  };

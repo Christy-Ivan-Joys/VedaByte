@@ -3,7 +3,7 @@
 import { Link, useLocation } from "react-router-dom"
 import '../../styles/panel.css'
 import { useState } from "react"
-import { FaComments, FaUser, FaGoogle, FaBook, FaCertificate } from "react-icons/fa"
+import { FaComments, FaUser, FaGoogle, FaBook, FaCertificate,FaCreditCard, FaReceipt } from "react-icons/fa"
 import { useSelector } from "react-redux";
 
 export function Panel() {
@@ -45,10 +45,18 @@ export function Panel() {
                 </Link>
                 <Link
                     to="/purchases"
-                    className={`panel-link ${location.pathname === '/purchases' ? 'active-link' : ''}`}
+                    className={`panel-link ${location.pathname === '/purchases' || 
+                    location.pathname.startsWith('/purchaseDetails/') ? 'active-link' : ''}`}
                 >
-                    <FaBook />
+                    <FaCreditCard />
                     {isExpanded ? <span>Purchases</span> : ''}
+                </Link>
+                <Link
+                    to="/transactions"
+                    className={`panel-link ${location.pathname === '/transactions' ? 'active-link' : ''}`}
+                >
+                    < FaReceipt/>
+                    {isExpanded ? <span>Transactions</span> : ''}
                 </Link>
                 <Link
                     to="/certifications"

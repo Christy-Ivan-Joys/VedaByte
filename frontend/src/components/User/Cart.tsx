@@ -12,7 +12,6 @@ type cartItem = {
     courseId: Course
 }
 export const Cart = () => {
-//    console.log(process.env,'this is env')
     const { studentInfo } = useSelector((state: any) => state.userAuth)
     const [cart, setCartItems] = useState<cartItem[]>([])
     const [Total, setTotal] = useState(0)
@@ -20,12 +19,12 @@ export const Cart = () => {
     const [checkout] = useCheckoutMutation()
     const [removeCartItem] = useRemoveCartItemMutation()
     const stripeKey = import.meta.env.VITE_STRIPE_SECRET_KEY as string;
-
     const handleCheckout = async () => {
         try {
             const stripe = await loadStripe(stripeKey)
             const userId = studentInfo._id
             const response = await checkout({ cart, userId }).unwrap()
+            console.log(response)
             if (Total !== 0) {
                 localStorage.setItem('Total', Total.toString())
             }
@@ -33,7 +32,8 @@ export const Cart = () => {
                 sessionId: response.id
             })
         } catch (error: any) {
-            if (error.data.message === 'Cart is Empty') {
+            console.log(error)
+            if (error?.data?.message === 'Cart is Empty') {
                 toast.error('Cart is empty')
             }
         }
@@ -65,9 +65,7 @@ export const Cart = () => {
             return acc + price
         }, 0)
         setTotal(total)
-
     }, [setCartItems, cart,studentInfo])
-    console.log(cart,'carttt')
     return (
         <div className="">
 

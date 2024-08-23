@@ -14,6 +14,7 @@ import { IErrorBoundary } from "../pages/Instructor/ErrorBoundary";
 import { Chat } from "../components/Instructor/Chat";
 import { EditCourse } from "../components/Instructor/EditCourse";
 import ProtectedRoute from "../components/Instructor/Protect";
+import Enrollments from "../components/Instructor/Enrollments";
 export function InstuctorRoutes() {
     return (
         <IErrorBoundary>
@@ -31,6 +32,7 @@ export function InstuctorRoutes() {
                     <Route path="/resetPassword" element={<ResetPassword />}/>
                     <Route path="/chat" element={<ProtectedRoute><Chat/></ProtectedRoute>}/>
                     <Route path="/editCourse/:id" element={<ProtectedRoute><EditCourse/></ProtectedRoute>}/>
+                    <Route path="/enrollments" element={<ProtectedRoute><Enrollments/></ProtectedRoute>}></Route>
                     <Route path='*' element={<NotFound/>}/>
                 </Routes>
             </CourseFormProvider>

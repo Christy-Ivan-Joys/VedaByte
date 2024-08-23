@@ -1,5 +1,5 @@
 import Module from "module";
-import mongoose, { ObjectId } from "mongoose";
+import mongoose, { Date, ObjectId } from "mongoose";
 import { Qualification,section,Certification } from "../types";
 
 export class instructor {
@@ -41,8 +41,8 @@ export class course {
         public readonly Introvideo: string,
         public readonly isApproved: boolean,
         public readonly module: section,
-        public readonly InstructorId: InstructorDetails
-
+        public readonly InstructorId: InstructorDetails,
+        public readonly createdAt:Date
     ) { }
 }
 interface InstructorDetails {

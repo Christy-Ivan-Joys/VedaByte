@@ -65,8 +65,6 @@ export class userInteractor implements iUserInteractor {
         }
     }
 
-
-
     async sendOtp(email: string, req: Request): Promise<string> {
         const otp = await SendMail(email)
         req.session.otp = otp
@@ -142,7 +140,7 @@ export class userInteractor implements iUserInteractor {
         })
         console.log('session idddd')
         return session.id
-        
+
     }
 
     async enrollCourse(id: string, total: string) {
@@ -248,12 +246,16 @@ export class userInteractor implements iUserInteractor {
             let enrolledCourses: enrolledCourses[] = []
             const courses = data.map((course) => {
                 const coursesPurchased = course.EnrolledCourses.map((course) => {
-                    enrolledCourses.push(course)
+                    if(course.status === true){
+                        enrolledCourses.push(course)
+                    }
                 })
             })
+
             enrolledCourses.sort((a, b) => {
                 return new Date(b.EnrolledAt).getTime() - new Date(a.EnrolledAt).getTime();
             });
+
             return enrolledCourses
         }
         throw new Error('No enrollments for the student')
@@ -294,7 +296,7 @@ export class userInteractor implements iUserInteractor {
 
     async fetchAllMessages(InstructorId: string, studentId: string) {
         const data = await this.repository.getAllMessages(InstructorId, studentId)
-
+        
         if (data.length) {
             // const sortedData = data.sort((a: any, b: any) => new Date(b.Time).getTime() - new Date(a.Time).getTime())
             // console.log(sortedData,'sorteddataaaaaa')
@@ -312,7 +314,7 @@ export class userInteractor implements iUserInteractor {
                 })
                 return acc
             }, {})
-            return group
+            return {group,data}
         }
         throw new Error('No messages found')
     }
@@ -343,28 +345,58 @@ export class userInteractor implements iUserInteractor {
     async deleteUser(id: string) {
         return this.repository.delete(id)
     }
-    async getUser(id: string){
+    async getUser(id: string) {
         return this.repository.findUser(id)
     }
 
-    async cancelEnrollment(data:any): Promise<any> {
-         const enrollment = await this.repository.findEnrollment(data.enrollmentId)
-         console.log(enrollment,'enrollment')
-         const courseWithHighProgress:any= enrollment?.EnrolledCourses?.filter((course)=>{
-            return data?.selectedCourses?.includes(course?.courseId) && course?.Progress > 20
-         })
-         if(courseWithHighProgress?.length>0){
-            throw new Error('Cannot cancel courses progressed above 20%')
-         }
-
-        //  const change = await this.repository.updateMany(
-        //     { _id: data.enrollmentId, "EnrolledCourses.courseId": { $in: data.selectedCourses } },
-        //     { $set: { "EnrolledCourses.$[elem].status": false } },
-        //     { arrayFilters: [{ "elem.courseId": { $in: data.selectedCourses } }] }
-        // );        console.log(change,'change')
-        const userUpdate = await this.repository.update(data.userId,{$pull:{$in:data.selectedCourses}}) 
-        console.log(userUpdate,'userUpdateteeeeeee')
+    async cancelEnrollment(data: any): Promise<any> {
+        const enrollment = await this.repository.findEnrollment(data.enrollmentId)
+        let coursesToCancel: any = []
+        enrollment?.EnrolledCourses.filter((course) => {
+            if (data.selectedCourses.includes(course.courseId._id.toString())) {
+                coursesToCancel.push(course.courseId)
+            }
+        })
+        const totalReturnFund = coursesToCancel?.reduce((total: number, course: course) => {
+            return parseInt(course.price)
+        }, 0)
+        const change = await this.repository.enrollmentsUpdate(data.enrollmentId,
+            {$set: { "EnrolledCourses.$[elem].status": false }},
+            {arrayFilters: [{ "elem.courseId": { $in: data.selectedCourses }}]}
+        )
+        const userUpdate = await this.repository.update(data.userId,
+            {
+                $pull: { enrollments: { $in: data.selectedCourses } },
+                $inc: { wallet: totalReturnFund }
+            })
         return userUpdate
     }
+    async makeWalletIntent(amount: number): Promise<any> {
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2024-04-10' })
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount,
+            currency: 'inr',
+            payment_method_types: ['card'],
+            description: 'Wallet Addition',
+        })
+        return paymentIntent
+    }
+
+    async addMoneyToWallet(amount: number, userId: string): Promise<user | null | any> {
+        const data = await this.repository.update(userId, { $inc: { wallet: amount } })
+        return data
+    }
+
+    async allWalletTransactions(): Promise<any> {
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2024-04-10' })
+        const paymentIntents = await stripe.paymentIntents.list({
+
+        })
+        const walletPayments = paymentIntents.data.filter(intent => {
+            return intent.description === 'Wallet Addition'
+        })
+        return { transactions: paymentIntents.data, wallet: walletPayments }
+    }
 }
+
 

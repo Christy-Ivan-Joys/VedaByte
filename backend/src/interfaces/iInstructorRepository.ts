@@ -14,4 +14,5 @@ export interface instructorRepositoryInterface {
     updateCourse(id:string,data:any):Promise<any>
     getInstructorMessages(studentId:string,InstructorId:string):Promise<any>
     courseCounts(courseIds:any):Promise<any>
+    getEnrollmentDetailsByCourseIds(courseIds:any):Promise<any>
 }

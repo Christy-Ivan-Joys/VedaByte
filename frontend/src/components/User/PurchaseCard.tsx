@@ -27,12 +27,7 @@ export const PurchaseCard: React.FC<PurchaseCardProps> = ({Purchases}) => {
 
     }
 
-    const handleCancel =(purchaseId:string)=>{
-
-      navigate(`/cancelPurchase/${purchaseId}`)
-
-     
-    }
+   
 
     return (
 
@@ -54,7 +49,6 @@ export const PurchaseCard: React.FC<PurchaseCardProps> = ({Purchases}) => {
                                 </div>
                                 <div className="flex gap-4 flex-shrink-0">
                                     <button className="bg-black w-24 h-8 rounded-2xl text-white text-sm font-semibold" onClick={()=>handleDetails(record._id)}>Details</button>
-                                    <button className="bg-black w-24 h-8 rounded-2xl text-white text-sm font-semibold" onClick={()=>handleCancel(record._id)}>Cancel</button>
                                 </div>
                             </div>
                         </div>

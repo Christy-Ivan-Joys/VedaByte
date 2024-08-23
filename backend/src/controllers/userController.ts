@@ -9,8 +9,8 @@ export default class userController {
     this.interactor = interactor;
   }
 
-  async onCreateUser(req: Request, res: Response, next: NextFunction){
-    
+  async onCreateUser(req: Request, res: Response, next: NextFunction) {
+
     try {
 
       const user = req.body
@@ -219,7 +219,6 @@ export default class userController {
     try {
       const data = await this.interactor.fetchAllTutors()
       res.status(HttpStatusCodes.OK).json(data)
-
     } catch (error: any) {
       res.status(400).json({ message: error.message })
     }
@@ -255,9 +254,11 @@ export default class userController {
       next(error)
     }
   }
+
   async onCancelEnrollment(req: Request, res: Response, next: NextFunction) {
 
     try {
+
       const userId = req.body.user._id
       const selectedCourses = req.body.selectedCourses
       const enrollmentId = req.body.enrollmentId
@@ -266,6 +267,36 @@ export default class userController {
 
     } catch (error) {
       console.log(error)
+      next(error)
+    }     
+  }
+  async onCreateWalletAddIntent(req: Request, res: Response, next: NextFunction) {
+
+    try {
+      const amount = req.body.amount
+      const data = await this.interactor.makeWalletIntent(amount)
+      res.status(HttpStatusCodes.CREATED).json(data)
+    } catch (error) {
+      next(error)
+    }
+  }
+  async onAddtoWallet(req: Request, res: Response, next: NextFunction){
+
+    try {
+      const amount = req.body.amount
+      const userId = req.body.user._id
+      const data = await this.interactor.addMoneyToWallet(amount, userId)
+      res.status(HttpStatusCodes.OK).json(data)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async onGetWalletTransactions(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await this.interactor.allWalletTransactions()
+      res.status(HttpStatusCodes.OK).json(data)
+    } catch (error) {
       next(error)
     }
   }
