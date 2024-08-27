@@ -13,7 +13,7 @@ export const Header = () => {
     const [isModal, setIsModal] = useState(false)
 
     const navigate = useNavigate()
-    const handleLogout = () => {
+   const handleInsLogout = () => {
 
         const InsLogout = async () => {
             Cookies.remove('InstructorAccessToken', { path: '/' })
@@ -50,7 +50,7 @@ export const Header = () => {
                         <h2 className="text-2xl font-semibold text-zinc-200 mb-4 ">Do you want to logout</h2>
                         <div className="flex gap-5 float-right">
                             <button className="text-black w-16 h-7 rounded-md bg-gray-300" onClick={() => setIsModal(false)}>cancel</button>
-                            <button className="text-white w-16 h-7 rounded-md bg-red-600" onClick={handleLogout}>Logout</button>
+                            <button className="text-white w-16 h-7 rounded-md bg-red-600" onClick={handleInsLogout}>Logout</button>
                         </div>
 
 

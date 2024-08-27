@@ -20,20 +20,20 @@ export function InstuctorRoutes() {
         <IErrorBoundary>
             <CourseFormProvider>
                 <Routes>
-                    <Route path="/login" element={<Login />}/>
-                    <Route path="/register" element={<Register/>}/>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
                     <Route path="/otp" element={<Otp />} />
-                    <Route path="/dashboard" element={<Dashboard/>}/>
+                    <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                     <Route path="/students" element={<Students/>}/>
-                    <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>}/>
-                    <Route path="/addcourse" element={<ProtectedRoute><AddCourse/></ProtectedRoute>}/>
-                    <Route path="/404" element={<NotFound/>}/>
-                    <Route path="/courses" element={<ProtectedRoute><Courses/></ProtectedRoute>}/>
-                    <Route path="/resetPassword" element={<ResetPassword />}/>
-                    <Route path="/chat" element={<ProtectedRoute><Chat/></ProtectedRoute>}/>
-                    <Route path="/editCourse/:id" element={<ProtectedRoute><EditCourse/></ProtectedRoute>}/>
-                    <Route path="/enrollments" element={<ProtectedRoute><Enrollments/></ProtectedRoute>}></Route>
-                    <Route path='*' element={<NotFound/>}/>
+                    <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                    <Route path="/addcourse" element={<ProtectedRoute><AddCourse /></ProtectedRoute>} />
+                    <Route path="/404" element={<NotFound />} />
+                    <Route path="/courses" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
+                    <Route path="/resetPassword" element={<ResetPassword />} />
+                    <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+                    <Route path="/editCourse/:id" element={<ProtectedRoute><EditCourse /></ProtectedRoute>} />
+                    <Route path="/enrollments" element={<ProtectedRoute><Enrollments /></ProtectedRoute>}></Route>
+                    <Route path='*' element={<NotFound />} />
                 </Routes>
             </CourseFormProvider>
         </IErrorBoundary>

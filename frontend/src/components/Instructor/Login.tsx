@@ -11,9 +11,10 @@ import { setInstructor } from '../../utils/redux/slices/instructorAuthSlice'
 import { ZodError } from 'zod'
 import { jwtDecode } from "jwt-decode"
 import { GoogleJwtPayload, FormData } from "../../types"
-import { useSigninMutation} from '../../utils/redux/slices/instructorApiSlices'
+import { useSigninMutation } from '../../utils/redux/slices/instructorApiSlices'
 import Cookies from 'js-cookie'
 import { useErrorHandler } from '../../pages/Instructor/ErrorBoundary'
+import { InstructorLogout } from '../../Helpers/Home'
 
 interface Formdata {
     email: string,
@@ -46,11 +47,11 @@ export default function Login() {
             LoginSchema.parse(data)
             const res = await signin(data).unwrap()
             setErrors({})
-            console.log(res,'res in login')
-            dispatch(setInstructor({ ...res}))
+            console.log(res, 'res in login')
+            dispatch(setInstructor({ ...res }))
             navigate('/instructor/dashboard')
 
-        } catch (error: any){
+        } catch (error: any) {
             console.log(error)
             if (error instanceof ZodError) {
                 const validationErrors: ValidationErrors = {}
@@ -60,9 +61,9 @@ export default function Login() {
                 console.log(validationErrors, 'validation')
                 setErrors(validationErrors)
                 return
-            }else{
+            } else {
                 const ErrorMessage = error?.data?.message
-                if (ErrorMessage === 'Invalid password'){
+                if (ErrorMessage === 'Invalid password') {
                     toast.error('Invalid credentials')
                 } else if (ErrorMessage === 'User not found') {
                     toast.error('Account not found.create an account!')
@@ -86,7 +87,7 @@ export default function Login() {
         }
 
         try {
-            
+
             const res = await signin(googleUser).unwrap()
             localStorage.setItem('token', res.accessToken)
             dispatch(setInstructor({ ...res }))
@@ -100,18 +101,23 @@ export default function Login() {
             } else if (ErrorMessage === 'User not found') {
                 toast.error('Account not found.create an account!')
                 navigate('/signup')
-            }else if(ErrorMessage === 'Manual user') {
-                    toast.error('Account not authenticated with google.Enter gmail and password')
+            } else if (ErrorMessage === 'Manual user') {
+                toast.error('Account not authenticated with google.Enter gmail and password')
             }
         }
     }
-    
+
     useEffect(() => {
-        const accessToken= Cookies.get('InstructorAccessToken')
-        if(accessToken){
+        const accessToken = Cookies.get('InstructorAccessToken')
+        if (accessToken) {
             navigate('/instructor/dashboard')
-        }else{
-           handleError('Access Token is required')
+        } else {
+            const refreshToken = Cookies.get('InstructorRefreshToken')
+            if (refreshToken) {
+                handleError('Access token is required')
+            } else {
+                InstructorLogout(dispatch)
+            }
         }
         const initializeGoogleLogin = () => {
             if (window.google) {

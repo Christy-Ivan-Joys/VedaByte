@@ -51,7 +51,6 @@ export const IErrorBoundary: React.FC<ChildrenProps> = ({ children }) => {
 
     useEffect(() => {
         if (hasError && TokenError) {
-
             if (TokenError === 'Access token is required' || TokenError === 'Invalid token') {
 
                 handleITokenRefresh()

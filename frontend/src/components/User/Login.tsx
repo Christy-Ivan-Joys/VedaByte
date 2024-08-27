@@ -97,7 +97,6 @@ export default function Login() {
 
     useEffect(() => {
         const accessToken = Cookies.get('StudentAccessToken')
-        console.log(accessToken,'studentAccesstoken')
         if(accessToken){
             navigate('/')
         }else{
