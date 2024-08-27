@@ -34,4 +34,7 @@ router.get('/inst-courses/:id', authMiddleware_1.protect, controller.onGetInstru
 router.post('/review-course', authMiddleware_1.protect, controller.onPostCourseReview.bind(controller));
 router.get('/reviews/:id', controller.onGetReviews.bind(controller));
 router.post('/cancel-enrollment', authMiddleware_1.protect, controller.onCancelEnrollment.bind(controller));
+router.post('/create-wallet-intent', authMiddleware_1.protect, controller.onCreateWalletAddIntent.bind(controller));
+router.post('/add-to-wallet', authMiddleware_1.protect, controller.onAddtoWallet.bind(controller));
+router.get('/wallet-transactions', authMiddleware_1.protect, controller.onGetWalletTransactions.bind(controller));
 exports.default = router;

@@ -17,7 +17,6 @@ const Enrollments = () => {
             try {
                 setIsLoading(true)
                 const data = await fetchDataForDashboard(undefined).unwrap()
-                console.log(data)
                 setEnrollmentDetails(data.enrollmentDetails)
                 setIsLoading(false)
             } catch (error: any) {

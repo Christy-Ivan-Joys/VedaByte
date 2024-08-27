@@ -31,7 +31,6 @@ export function Dashboard() {
                 handleError(error.data.message)
                 console.log(error)
             }
-            //    const data = await 
         }
         fetchData()
     }, [])

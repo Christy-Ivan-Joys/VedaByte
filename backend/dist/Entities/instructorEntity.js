@@ -28,7 +28,7 @@ class InstructorWithId {
 }
 exports.InstructorWithId = InstructorWithId;
 class course {
-    constructor(_id, name, category, description, courseImage, price, courselevel, Introvideo, isApproved, module, InstructorId) {
+    constructor(_id, name, category, description, courseImage, price, courselevel, Introvideo, isApproved, module, InstructorId, createdAt) {
         this._id = _id;
         this.name = name;
         this.category = category;
@@ -40,6 +40,7 @@ class course {
         this.isApproved = isApproved;
         this.module = module;
         this.InstructorId = InstructorId;
+        this.createdAt = createdAt;
     }
 }
 exports.course = course;

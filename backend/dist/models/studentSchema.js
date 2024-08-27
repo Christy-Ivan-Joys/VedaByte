@@ -63,6 +63,10 @@ const studentModel = new mongoose_1.default.Schema({
         type: String,
         default: null
     },
+    wallet: {
+        type: Number,
+        default: 0
+    },
     googleUserId: {
         type: String,
         default: null

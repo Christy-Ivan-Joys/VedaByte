@@ -61,7 +61,9 @@ class instructorInteractor {
     }
     async allCourses(input) {
         const data = await this.repository.fetchCourses(input);
-        return data;
+        const sortedData = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        console.log(sortedData);
+        return sortedData;
     }
     async updateProfileImage(imageURL, user) {
         const instructorId = user._id;
@@ -128,6 +130,7 @@ class instructorInteractor {
             module: data.module
         };
         const update = await this.repository.updateCourse(id, { $set: updateData });
+        console.log(update);
         return update;
     }
     async fetchInstructorMessages(studentId, InstructorId) {
@@ -179,8 +182,8 @@ class instructorInteractor {
             const revenue = coursePrice * course.count;
             return total + revenue;
         }, 0);
-        return { enrollments, total, instructorCourses };
-        // const courseEnrollments = await this.repository.         
+        const enrollmentDetails = await this.repository.getEnrollmentDetailsByCourseIds(courseIds);
+        return { enrollments, total, instructorCourses, enrollmentDetails };
     }
 }
 exports.instructorInteractor = instructorInteractor;

@@ -9,7 +9,6 @@ const studentSchema_1 = require("../models/studentSchema");
 const adminSchema_1 = require("../models/adminSchema");
 const protect = async (req, res, next) => {
     let token = req.cookies.StudentAccessToken;
-    // const refreshToken = req.cookies.StudentRefreshToken
     if (!token) {
         console.log('no access token');
         return res.status(401).json({ message: 'Access token is required' });

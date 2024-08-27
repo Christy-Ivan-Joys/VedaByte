@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userWithId = exports.user = void 0;
 class user {
-    constructor(_id, name, email, cart, enrollments, reviews, isBlocked, contact, password, googleUserId, profileImage, status) {
+    constructor(_id, name, email, cart, enrollments, reviews, isBlocked, wallet, contact, password, googleUserId, profileImage, status) {
         this._id = _id;
         this.name = name;
         this.email = email;
@@ -10,6 +10,7 @@ class user {
         this.enrollments = enrollments;
         this.reviews = reviews;
         this.isBlocked = isBlocked;
+        this.wallet = wallet;
         this.contact = contact;
         this.password = password;
         this.googleUserId = googleUserId;

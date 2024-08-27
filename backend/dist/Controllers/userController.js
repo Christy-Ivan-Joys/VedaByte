@@ -244,5 +244,35 @@ class userController {
             next(error);
         }
     }
+    async onCreateWalletAddIntent(req, res, next) {
+        try {
+            const amount = req.body.amount;
+            const data = await this.interactor.makeWalletIntent(amount);
+            res.status(errorResponse_1.HttpStatusCodes.CREATED).json(data);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    async onAddtoWallet(req, res, next) {
+        try {
+            const amount = req.body.amount;
+            const userId = req.body.user._id;
+            const data = await this.interactor.addMoneyToWallet(amount, userId);
+            res.status(errorResponse_1.HttpStatusCodes.OK).json(data);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    async onGetWalletTransactions(req, res, next) {
+        try {
+            const data = await this.interactor.allWalletTransactions();
+            res.status(errorResponse_1.HttpStatusCodes.OK).json(data);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
 }
 exports.default = userController;

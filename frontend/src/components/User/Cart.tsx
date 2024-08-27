@@ -19,6 +19,7 @@ export const Cart = () => {
     const [checkout] = useCheckoutMutation()
     const [removeCartItem] = useRemoveCartItemMutation()
     const stripeKey = import.meta.env.VITE_STRIPE_SECRET_KEY as string;
+    
     const handleCheckout = async () => {
         try {
             const stripe = await loadStripe(stripeKey)

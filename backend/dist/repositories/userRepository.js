@@ -167,11 +167,11 @@ class userRepository {
         return data;
     }
     async findEnrollment(enrollmentId) {
-        const data = await this.enrollmentdb.findOne({ _id: enrollmentId });
+        const data = await this.enrollmentdb.findOne({ _id: enrollmentId }).populate({ path: 'EnrolledCourses', populate: { path: 'courseId', populate: { path: 'InstructorId' } } }).exec();
         return data;
     }
-    async enrollmentsUpdate(enrollmentId, data) {
-        const enrollment = await this.enrollmentdb.findByIdAndUpdate(enrollmentId, data, { new: true });
+    async enrollmentsUpdate(enrollmentId, data, options = {}) {
+        const enrollment = await this.enrollmentdb.findByIdAndUpdate(enrollmentId, data, { new: true, ...options });
         return enrollment;
     }
 }

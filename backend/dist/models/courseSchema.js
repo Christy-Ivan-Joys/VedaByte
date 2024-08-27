@@ -36,6 +36,10 @@ const courseModel = new mongoose_1.default.Schema({
         ref: 'Instructor',
         required: true
     },
+    createdAt: {
+        type: Date,
+        default: Date.now, // Use a function to get the current date/time
+    },
     module: [
         {
             title: {
@@ -51,6 +55,6 @@ const courseModel = new mongoose_1.default.Schema({
                 type: String
             }
         }
-    ]
+    ],
 });
 exports.courseSchema = mongoose_1.default.model('Courses', courseModel);

@@ -217,7 +217,9 @@ class userInteractor {
             let enrolledCourses = [];
             const courses = data.map((course) => {
                 const coursesPurchased = course.EnrolledCourses.map((course) => {
-                    enrolledCourses.push(course);
+                    if (course.status === true) {
+                        enrolledCourses.push(course);
+                    }
                 });
             });
             enrolledCourses.sort((a, b) => {
@@ -275,7 +277,7 @@ class userInteractor {
                 });
                 return acc;
             }, {});
-            return group;
+            return { group, data };
         }
         throw new Error('No messages found');
     }
@@ -307,21 +309,43 @@ class userInteractor {
     }
     async cancelEnrollment(data) {
         const enrollment = await this.repository.findEnrollment(data.enrollmentId);
-        console.log(enrollment, 'enrollment');
-        const courseWithHighProgress = enrollment?.EnrolledCourses?.filter((course) => {
-            return data?.selectedCourses?.includes(course?.courseId) && course?.Progress > 20;
+        let coursesToCancel = [];
+        enrollment?.EnrolledCourses.filter((course) => {
+            if (data.selectedCourses.includes(course.courseId._id.toString())) {
+                coursesToCancel.push(course.courseId);
+            }
         });
-        if (courseWithHighProgress?.length > 0) {
-            throw new Error('Cannot cancel courses progressed above 20%');
-        }
-        //  const change = await this.repository.updateMany(
-        //     { _id: data.enrollmentId, "EnrolledCourses.courseId": { $in: data.selectedCourses } },
-        //     { $set: { "EnrolledCourses.$[elem].status": false } },
-        //     { arrayFilters: [{ "elem.courseId": { $in: data.selectedCourses } }] }
-        // );        console.log(change,'change')
-        const userUpdate = await this.repository.update(data.userId, { $pull: { $in: data.selectedCourses } });
-        console.log(userUpdate, 'userUpdateteeeeeee');
+        const totalReturnFund = coursesToCancel?.reduce((total, course) => {
+            return parseInt(course.price);
+        }, 0);
+        const change = await this.repository.enrollmentsUpdate(data.enrollmentId, { $set: { "EnrolledCourses.$[elem].status": false } }, { arrayFilters: [{ "elem.courseId": { $in: data.selectedCourses } }] });
+        const userUpdate = await this.repository.update(data.userId, {
+            $pull: { enrollments: { $in: data.selectedCourses } },
+            $inc: { wallet: totalReturnFund }
+        });
         return userUpdate;
+    }
+    async makeWalletIntent(amount) {
+        const stripe = new stripe_1.Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-04-10' });
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount,
+            currency: 'inr',
+            payment_method_types: ['card'],
+            description: 'Wallet Addition',
+        });
+        return paymentIntent;
+    }
+    async addMoneyToWallet(amount, userId) {
+        const data = await this.repository.update(userId, { $inc: { wallet: amount } });
+        return data;
+    }
+    async allWalletTransactions() {
+        const stripe = new stripe_1.Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-04-10' });
+        const paymentIntents = await stripe.paymentIntents.list({});
+        const walletPayments = paymentIntents.data.filter(intent => {
+            return intent.description === 'Wallet Addition';
+        });
+        return { transactions: paymentIntents.data, wallet: walletPayments };
     }
 }
 exports.userInteractor = userInteractor;

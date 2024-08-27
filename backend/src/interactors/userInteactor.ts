@@ -71,7 +71,7 @@ export class userInteractor implements iUserInteractor {
         return otp
     }
 
-    async allCourses() {
+    async allCourses(){
         const data = await this.repository.coursesData()
         if (data !== null) {
             return data
@@ -84,7 +84,6 @@ export class userInteractor implements iUserInteractor {
         const Id = input.id
         const studentId = input.studentId
         const user = await this.repository.findUserWithId(studentId)
-
         if (!user) {
             throw new Error('Student not found')
         }
