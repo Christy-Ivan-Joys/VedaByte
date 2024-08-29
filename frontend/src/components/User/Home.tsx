@@ -29,7 +29,11 @@ export function Home() {
         }
         window.addEventListener('scroll', reveal);
         const getCourses = async () => {
-            const courses = await fetchCourses(undefined).unwrap()
+            const courses = await fetchCourses({
+                studentInfo,
+                page:'0',
+                limit:'0'
+            }).unwrap()
             console.log(courses)
             if (courses) {
                 setCourses(courses.slice(0, 4))
