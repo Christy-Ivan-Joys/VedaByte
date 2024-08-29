@@ -43,10 +43,11 @@ export const socketConfig = (server: any) => {
         })
 
         socket.on('privateMessage', async ({ type, sender, recipient, text, room }) => {
+            console.log(type,sender,recipient,text)
             const Time = getTime(Date.now())
             const ioString = new Date().toISOString()
             const formattedDate = formatDateTimeToIST(ioString)
-            const messageData = { senderId: sender._id, recipientId: recipient._id, message: text, Time: formattedDate, type: type }
+            const messageData = { senderId: sender._id, recipientId: recipient._id, message: text, Time:formattedDate, type: type}
             const update = await saveMessageToDatabase(sender, recipient, text, ioString, type)
             io.to(room).emit('privateMessage', messageData)
         })

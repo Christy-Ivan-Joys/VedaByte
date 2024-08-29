@@ -181,6 +181,13 @@ export const userApiSlices = apiSlice.injectEndpoints({
                 url: `${STUDENT_URL}/wallet-transactions`,
                 method: 'GET',
             })
+        }),
+        messagesFromStudent:builder.mutation({
+            query:(data)=>({
+                url:`${STUDENT_URL}/student-messages`,
+                method:'POST',
+                body:data
+            })
         })
     })
 })
@@ -211,5 +218,6 @@ export const {
     useCancelEnrollmentMutation,
     useCreateWalletAddIntentMutation,
     useAddMoneytoWalletMutation,
-    useWalletTransactionsMutation
+    useWalletTransactionsMutation,
+    useMessagesFromStudentMutation
 } = userApiSlices 

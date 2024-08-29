@@ -200,6 +200,7 @@ export class userRepository implements iUserRepository {
                 { $and: [{ 'sender._id': InstructorId.toString() }, { 'recipient._id': studentId.toString() }] }
             ]
         })
+
         return data
     }
     async getAllInstructors(): Promise<instructor[]> {
@@ -224,12 +225,23 @@ export class userRepository implements iUserRepository {
         const data = await this.enrollmentdb.findOne({ _id: enrollmentId }).populate({ path: 'EnrolledCourses', populate: { path: 'courseId', populate: { path: 'InstructorId' } } }).exec()
         return data
     }
-    async enrollmentsUpdate(enrollmentId: string, data: any,options:any={}): Promise<enrollment | null | any> {
-        const enrollment = await this.enrollmentdb.findByIdAndUpdate(enrollmentId, data, { new: true,...options })
+    async enrollmentsUpdate(enrollmentId: string, data: any, options: any = {}): Promise<enrollment | null | any> {
+        const enrollment = await this.enrollmentdb.findByIdAndUpdate(enrollmentId, data, { new: true, ...options })
         return enrollment
     }
 
     // async updateEnrollmentCancel(): Promise<any> {
     //      const cancel = await this.enrollment.findby
     // }
+    async fetchMessagesForStudent(studentId: string, instructorIds: []): Promise<any> {
+        console.log(studentId,instructorIds)
+        const data = await this.messagedb.find({
+            $or: [
+                { $and: [{ 'sender._id': studentId.toString() }, { 'recipient._id': { $in: instructorIds }}] },
+                { $and: [{ 'sender._id': { $in: instructorIds } }, { 'recipient._id': studentId.toString()}] }
+            ]
+        });
+        return data
+
+    }
 }                                  

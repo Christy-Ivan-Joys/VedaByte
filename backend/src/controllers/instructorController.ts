@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { instructorInteractor } from "../interactors/instructorInteractor";
 import { instructorInteractorInterface } from "../interfaces/iInstructorInteractor";
+import { HttpStatusCodes } from "../utils/Helpers/errorResponse";
 
 
 export default class instructorController {
@@ -215,13 +216,23 @@ export default class instructorController {
     }
     async onGraphData(req: Request, res: Response, next: NextFunction) {
         try {
-            
+
             const instructorId = req.body.user._id
             const data = await this.interactor.getGraphData(instructorId)
             res.status(200).json(data)
 
         } catch (error) {
 
+        }
+
+    }
+    async onGetInstructorMessages(req: Request, res: Response, next: NextFunction) {
+        try {
+            const instructorId = req.body.user._id
+            const data = await this.interactor.instructorMessages(instructorId)
+            res.status(HttpStatusCodes.OK).json(data)
+        } catch (error){
+            next(error)
         }
 
     }

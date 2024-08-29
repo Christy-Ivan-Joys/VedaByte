@@ -1,4 +1,4 @@
-import { FaSearch, FaPlus } from "react-icons/fa"
+import { FaSearch, FaPlus, FaMoneyBillWave } from "react-icons/fa"
 import Header from "./Header"
 import { Panel } from "./Panel"
 import { Pagination, Stack } from "@mui/material"
@@ -9,9 +9,11 @@ import { loadStripe } from "@stripe/stripe-js"
 import { useSelector } from "react-redux"
 import { useWalletTransactionsMutation } from "../../utils/redux/slices/userApiSlices"
 import { Paginate } from "../../Helpers/Pagination"
-
+import '../../styles/spinner.css'
+import WithdrawModal from "../../pages/User/WithdrawModal"
 const Transactions = () => {
     const [addMoneyModal, setAddMoneyModal] = useState<boolean>(false)
+    const [withdrawMoneyModal,setWithdrawMoneyModal] = useState<boolean>(false)
     const publishKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string
     const stripePromise = loadStripe(publishKey);
     const { studentInfo } = useSelector((state: any) => state.userAuth)
@@ -19,13 +21,16 @@ const Transactions = () => {
     const [walletTransactions] = useWalletTransactionsMutation()
     const [currentPage, setCurrentPage] = useState(1)
     const [pages, setPages] = useState(0)
+    const [isLoading, setIsLoading] = useState(false)
     const coursePerPage = 6
     useEffect(() => {
         const fetchTransactions = async () => {
+            setIsLoading(true)
             const transactions: any = await walletTransactions(undefined).unwrap()
             const { totalPages, paginatedItems } = Paginate(transactions.transactions, currentPage, coursePerPage)
             setWalletPayments(paginatedItems)
             setPages(totalPages)
+            setIsLoading(false)
         }
         fetchTransactions()
     }, [currentPage, walletPayments])
@@ -63,7 +68,10 @@ const Transactions = () => {
                                         <FaPlus />
                                     </button>
                                 </div>
-                                <p className="font-semibold text-xl text-zinc-200 hover:scale-110 hover:translate-x-3">Bal . ₹{studentInfo?.wallet}</p>
+                                <p className="font-semibold text-xl text-zinc-200 hover:scale-110 hover:translate-x-3 hover:text-cyan">Bal . ₹{studentInfo?.wallet}</p>
+                                <button className="flex justify-end items-center text-white text-sm hover:text-cyan">
+                                    <FaMoneyBillWave className="mr-2" /> Withdraw
+                                </button>
                             </div>
                         </div>
                         <div className="mt-6">
@@ -79,7 +87,13 @@ const Transactions = () => {
                                         </div>
                                     ))
                                 ) : (
-                                    <p>No transactions found.</p>
+                                    isLoading ? (
+                                        <div className="flex justify-center items-center">
+                                            <div className="flex loader"></div>
+                                        </div>
+                                    ) : (
+                                        <p>No transactions found.</p>
+                                    )
                                 )}
                             </div>
                         </div>
@@ -98,10 +112,11 @@ const Transactions = () => {
                     <Elements stripe={stripePromise}>
                         {addMoneyModal && <WalletModal setAddMoneyModal={setAddMoneyModal} />}
                     </Elements>
-
+                    <Elements stripe={stripePromise}>
+                        {withdrawMoneyModal && <WithdrawModal setWithdrawMoneyModal={setWithdrawMoneyModal} />}
+                    </Elements>
                 </div>
-
-            </div>
+            </div >
         </>
     )
 }

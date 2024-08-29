@@ -35,5 +35,6 @@ export interface iUserInteractor {
     makeWalletIntent(amount:number):Promise<any>
     addMoneyToWallet(amount:number,userId:string):Promise<user | null>
     allWalletTransactions():Promise<any>
+    getStudentMessages(studentId:string,instructorIds:[]):Promise<any>
 }
 

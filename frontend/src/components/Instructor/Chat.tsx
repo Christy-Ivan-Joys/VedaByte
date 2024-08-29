@@ -19,13 +19,13 @@ import { faMicrophone } from "@fortawesome/free-solid-svg-icons"
 export const Chat = () => {
 
     const instructor = useSelector((state: any) => state.instructorAuth.instructorInfo)
-    console.log(instructor)
     const handleError = useErrorHandler()
     const [message, setMessage] = useState('')
     const [messages, setMessages] = useState<any>({})
     const [sender, setSender] = useState<any>()
     const [selectedStudent, setSelectedStudent] = useState<any>()
-    const students = useFetchEnrolledCoursesStudents(handleError)
+    const { students, instMessages, setFetchChange } = useFetchEnrolledCoursesStudents(handleError)
+    const [Students, setStudents] = useState<any>([])
     const [fetchInstructorMessages] = useFetchInstructorMessagesMutation()
     const [typingStatus, setTypingStatus] = useState<any>({})
     const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null)
@@ -36,39 +36,71 @@ export const Chat = () => {
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
     const [audioChunks, setAudioChunks] = useState<Blob[]>([])
     const [audioStream, setAudioStream] = useState<MediaStream | null>(null)
-    
+    const [change, setChange] = useState(false)
     useEffect(() => {
-
         if (students && students?.length > 0) {
-            setSelectedStudent(students[0]);
+            setStudents([...students])
         }
-
     }, [students])
 
     useEffect(() => {
-
         const sinc = async () => {
-
             try {
-                const studentId = selectedStudent?._id
-                if (studentId) {
-                    const getMessages = await fetchInstructorMessages(studentId).unwrap()
-                    setMessages(getMessages)
-                }
-
-            } catch (error: any) {
+                const studentMessageTimestamps: any = {};
+                instMessages.forEach((message: any) => {
+                    const senderId = message.sender._id;
+                    const recipientId = message.recipient._id;
+                    const messageTime = new Date(message.Time).getTime();
+                    if (senderId === instructor._id) {
+                        if (!studentMessageTimestamps[recipientId] || messageTime > studentMessageTimestamps[recipientId]) {
+                            studentMessageTimestamps[recipientId] = messageTime;
+                        }
+                    } else if (recipientId === instructor._id) {
+                        if (!studentMessageTimestamps[senderId] || messageTime > studentMessageTimestamps[senderId]) {
+                            studentMessageTimestamps[senderId] = messageTime;
+                        }
+                    }
+                });
+                const updatedInstructors = students?.map((student: any) => ({
+                    ...student,
+                    latestMessageTime: studentMessageTimestamps[student._id] || 0,
+                }));
+                const sortedStudents = updatedInstructors.sort(
+                    (a: any, b: any) => b.latestMessageTime - a.latestMessageTime
+                );
+                 
+                setStudents(sortedStudents)
+                setSelectedStudent(sortedStudents[0])
+            }
+            catch (error: any) {
                 if (error.data.message === 'No messages found') {
                     setMessages({})
                 }
                 console.log(error)
             }
         }
-        if (selectedStudent) {
-            sinc()
-        }
+        sinc()
+        console.log(change)
+    }, [students, fetchInstructorMessages,change]);
 
-    }, [students, selectedStudent, fetchInstructorMessages]);
- 
+    useEffect(() => {
+        const fetchMessages = async () => {
+            if (selectedStudent) {
+                try {
+                    const instructorId = selectedStudent._id;
+                    const getAllMessages = await fetchInstructorMessages(instructorId).unwrap();
+                    setMessages(getAllMessages);
+                } catch (error: any) {
+                    if (error?.data?.message === 'No messages found') {
+                        setMessages({});
+                    }
+                    handleError(error?.data?.message);
+                }
+            }
+        };
+        fetchMessages();
+    }, [selectedStudent, fetchInstructorMessages, handleError, change]);
+
     useEffect(() => {
 
         const token = Cookies.get('InstructorAccessToken')
@@ -76,14 +108,12 @@ export const Chat = () => {
         socket.emit('authenticate', token)
 
         socket.on('Authorized', (user: any) => {
-            console.log(user, 'inst authrorised')
             setSender(user)
             students?.forEach((student: any) => {
                 const room = `private-${student._id}-${user._id}`
                 socket.emit('joinRoom', room)
             })
             socket.on('userOnline', (data) => {
-                console.log(data, 'online')
                 setOnlineUsers((prev: any) => ({ ...prev, [data.userId]: 'online' }));
             });
             socket.on('userOffline', (data) => {
@@ -100,6 +130,8 @@ export const Chat = () => {
                     type: message.type
                 }
                 const updatedMessages = [...prevMessages['Messages'] || [], newMessage]
+                setChange(prevChange => !prevChange);
+                setFetchChange(prevChange => !prevChange);
                 // updatedMessages.sort((a: any, b: any) => a.TimeforSorting - b.TimeforSorting)
                 // updatedMessages.forEach((item) => delete item.TimeforSorting)
                 return {
@@ -115,14 +147,12 @@ export const Chat = () => {
             }));
         });
         socket.on('stopTyping', (data: { userId: string }) => {
-            console.log(typingTimeout)
             setTypingStatus((prevStatus: any) => ({
                 ...prevStatus,
                 [data.userId]: false,
             }));
         });
         socket.on('Unauthorized', (error: string) => {
-            console.log(error, 'error in socket authentication')
             handleError(error)
         })
 
@@ -132,9 +162,10 @@ export const Chat = () => {
             socket.off('privateMessage')
         }
 
-    }, [students, handleError, setSender, setMessages, useFetchEnrolledCoursesStudents, socket])
+    }, [students, handleError, setSender, setMessages, useFetchEnrolledCoursesStudents, socket,change])
 
     const sendMessage = (recipient: any) => {
+        console.log(typingTimeout)
         if (message === '') {
             return
         }
@@ -142,6 +173,8 @@ export const Chat = () => {
         const text = message
         const room = `private-${recipient._id}-${sender._id}`
         socket.emit('privateMessage', { type, sender, recipient, text, room })
+        setChange(prevChange => !prevChange);
+        setFetchChange(prevChange => !prevChange);
         setMessage('')
     }
     const handleTyping = (e: any) => {
@@ -170,17 +203,17 @@ export const Chat = () => {
         }
         if (file) {
             try {
-                
+
                 const formData = new FormData();
                 formData.append("file", file);
                 formData.append('upload_preset', 'vedaByte');
-               
+
                 const upload = await handlefileUpload(formData);
                 const text = upload.url;
                 const recipient = selectedStudent
                 const room = `private-${selectedStudent?._id}-${sender?._id}`;
                 socket.emit('privateMessage', { type, sender, recipient, text, room });
-               
+
             } catch (error) {
                 console.log(error)
             } finally {
@@ -228,6 +261,14 @@ export const Chat = () => {
             }
         }
     };
+    const getMessagesForStudent = (studentId: string): any => {
+        if (Array.isArray(messages.Messages)) {
+            return instMessages.filter((message: any) => message?.recipient?._id === studentId || message?.sender?._id === studentId);
+        } else {
+            console.error('messages.Messages is not an array:', messages.Messages);
+            return [];
+        }
+    };
 
     return (
         <div className="main-layout">
@@ -248,29 +289,47 @@ export const Chat = () => {
                                 <FaSearch />
                             </div>
                         </div>
-                        {students.length ? (
-                            students?.map((student: any) => (
-                                <div key={student._id} className="flex w-full h-16 border-2 border-gray-300 justify-start items-start p-3" onClick={() => setSelectedStudent(student)}>
-                                    {student?.profileImage ? (
-                                        <div className="relative">
-                                            <img src={student.profileImage} className="w-12 h-12 rounded-full bg-black" alt={student?.name} />
-                                            {onlineUsers[student?._id] === 'online' && (
-                                                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-700 rounded-full border-2 border-white"></span>
+                        {Students.length ? (
+                            Students?.map((student: any) => {
+
+                                const messagesForStudent = getMessagesForStudent(student._id);
+                                const lastMessage = messagesForStudent[messagesForStudent.length - 1];
+
+                                return (
+                                    <div key={student._id} className="flex w-full h-16 border-2 border-gray-300 justify-start items-start p-3" onClick={() => setSelectedStudent(student)}>
+                                        {student?.profileImage ? (
+                                            <div className="relative">
+                                                <img src={student.profileImage} className="w-10 h-10 rounded-full bg-black" alt={student?.name} />
+                                                {onlineUsers[student?._id] === 'online' && (
+                                                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-700 rounded-full border-2 border-white"></span>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <p className="flex justify-center items-center bg-zinc-800 w-10 h-10 text-md text-white rounded-full"><FaUser size={20} /></p>
+                                        )}
+                                        <div className="flex flex-col ml-4">
+                                            <span className=" text-xs font-semibold">{student.name}</span>
+                                            {lastMessage ? (
+                                                <>
+                                                    <span className="text-xs text-green-900 font-semibold">
+                                                        last message : {lastMessage?.type === 'text' ? `${lastMessage?.message.substring(0,6)}...` : 'File'}
+                                                    </span>
+                                                    <span className="text-xs text-gray-700 font-semibold">
+                                                        {new Date(lastMessage?.Time).toLocaleString()}
+                                                    </span>
+                                                </>
+                                            ) : (
+                                                <span className="text-sm text-gray-500">No messages</span>
+                                            )}
+                                            {typingStatus[sender?._id] && (
+                                                <span className="text-xs font-semibold text-gray-500 ml-10">
+                                                    Typing...
+                                                </span>
                                             )}
                                         </div>
-                                    ) : (
-                                        <p className="flex justify-center items-center bg-zinc-800 w-10 h-10 text-md text-white rounded-full"><FaUser size={20} /></p>
-                                    )}
-
-                                    <span className="ml-4 text-xs font-semibold">{student.name}</span>
-                                    {typingStatus[sender?._id] && (
-                                        <span className="text-xs font-semibold text-gray-500 ml-10">
-                                            Typing...
-                                        </span>
-                                    )}
-
-                                </div>
-                            ))
+                                    </div>
+                                )
+                            })
                         ) : (
                             <p className=" flex justify-center text-zinc-700 font-semibold">No messages found !</p>
                         )}
@@ -308,32 +367,32 @@ export const Chat = () => {
                                                     ) : (
                                                         ''
                                                     )}
-                                                   <div className={`inline-block px-2 py-1 rounded-lg shadow-md bg-lime-200 relative flex-col`}>
-                                                            {msg?.type === "text" && <span>{msg?.text}</span>}
-                                                            {msg?.type === "image" && (
-                                                                <img
-                                                                    src={msg?.text}
-                                                                    alt="Sent image"
-                                                                    className="w-40 h-40 object-cover rounded"
-                                                                />
-                                                            )}
-                                                            {msg?.type === "video" && (
-                                                                <video controls className="w-40 h-40 rounded">
-                                                                    <source src={msg?.text} type="video/mp4" />
-                                                                    Your browser does not support the video tag.
-                                                                </video>
-                                                            )}
-                                                            {msg?.type === "audio" && (
-                                                                <audio controls className="w-40">
-                                                                    <source src={msg?.text} type="audio/mpeg" />
-                                                                    Your browser does not support the audio element.
-                                                                </audio>
-                                                            )}
+                                                    <div className={`inline-block px-2 py-1 rounded-lg shadow-md bg-lime-200 relative flex-col`}>
+                                                        {msg?.type === "text" && <span>{msg?.text}</span>}
+                                                        {msg?.type === "image" && (
+                                                            <img
+                                                                src={msg?.text}
+                                                                alt="Sent image"
+                                                                className="w-40 h-40 object-cover rounded"
+                                                            />
+                                                        )}
+                                                        {msg?.type === "video" && (
+                                                            <video controls className="w-40 h-40 rounded">
+                                                                <source src={msg?.text} type="video/mp4" />
+                                                                Your browser does not support the video tag.
+                                                            </video>
+                                                        )}
+                                                        {msg?.type === "audio" && (
+                                                            <audio controls className="w-40">
+                                                                <source src={msg?.text} type="audio/mpeg" />
+                                                                Your browser does not support the audio element.
+                                                            </audio>
+                                                        )}
 
-                                                            <span className="text-xs text-gray-500 self-end ml-2">
-                                                                {msg.Time}
-                                                            </span>
-                                                        </div>
+                                                        <span className="text-xs text-gray-500 self-end ml-2">
+                                                            {msg.Time}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -433,7 +492,7 @@ export const Chat = () => {
 
 
                             </div>
-                            
+
                         </div>
                     ) : (
                         <div className="flex justify-center ml-96 font-semibold text-xl items-center">

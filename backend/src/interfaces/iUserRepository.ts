@@ -28,4 +28,5 @@ export interface iUserRepository {
     findEnrollment(enrollmentId:string):Promise<enrollment | null>
     enrollmentsUpdate(enrollmentId:string,data:any,options:any):Promise<enrollment | null>
     // updateEnrollmentCancel(data:any):Promise<any>
+    fetchMessagesForStudent(studentId:string,instructorIds:[]):Promise<any>
 }   

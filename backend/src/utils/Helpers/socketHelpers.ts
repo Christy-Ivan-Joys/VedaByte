@@ -31,6 +31,7 @@ export const verifyUser = async (token: any): Promise<any> => {
 
 export const saveMessageToDatabase = async (sender:any, recipient:any, message: string,Time:string,type:string): Promise<any | null> => {
     const newChat = await chatSchema.create({ sender,recipient,message,Time,type})
+    
     return newChat
 
 }

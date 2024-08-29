@@ -2,7 +2,7 @@ import Header from "./Header"
 import { Panel } from "./Panel"
 import { FaCamera, FaPaperclip, FaSearch, FaVideo } from "react-icons/fa"
 import socket from "../../utils/SocketIO/SocketIOClient"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Cookies from "js-cookie"
 import { useFetchAllMessagesMutation } from "../../utils/redux/slices/userApiSlices"
 import { useErrorHandler } from "../../pages/User/ErrorBoundary"
@@ -12,17 +12,19 @@ import Picker, { EmojiClickData } from 'emoji-picker-react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faMicrophone } from "@fortawesome/free-solid-svg-icons"
 import { handlefileUpload } from "../../Helpers/Cloudinary"
+import { useSelector } from "react-redux"
 
 
 
 export const Chat = () => {
 
     const [message, setMessage] = useState('')
+    const student = useSelector((state: any) => state.userAuth.studentInfo);
     const [sender, setSender] = useState<any>()
     const [messages, setMessages] = useState<any>({})
     const handleError = useErrorHandler()
-    const data: any = useFetchEnrolledCoursesTutors(handleError)
-    const [Instructors, setInstructors] = useState<any>(data || [])
+    const { instructors, studentMessages, setFetchChange } = useFetchEnrolledCoursesTutors(handleError);
+    const [Instructors, setInstructors] = useState<any>(instructors || [])
     const [selectedInstructor, setSelectedInstructor] = useState<any>()
     const [fetchAllMessages] = useFetchAllMessagesMutation()
     const [typingStatus, setTypingStatus] = useState<any>({})
@@ -34,45 +36,84 @@ export const Chat = () => {
     const [audioChunks, setAudioChunks] = useState<Blob[]>([])
     const [audioStream, setAudioStream] = useState<MediaStream | null>(null)
     const [onlineUsers, setOnlineUsers] = useState<any>({});
+    const chatContainerRef = useRef<HTMLDivElement | null>(null)
+    const [change, setChange] = useState(false)
     useEffect(() => {
-        if (data && data.length > 0) {
-            setInstructors(data);
-            setSelectedInstructor(data[0]);
+        if (instructors && instructors.length > 0) {
+            setInstructors([...instructors]);
         }
-    }, [data])
+    }, [instructors])
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const Instructor = selectedInstructor?._id
-                if (Instructor) {
-                    const getAllMessages = await fetchAllMessages(Instructor).unwrap()
-                    setMessages(getAllMessages.group)
-                }
+                const instructorMessageTimestamps: any = {};
+                studentMessages.forEach((message: any) => {
+                    const senderId = message.sender._id;
+                    const recipientId = message.recipient._id;
+                    const messageTime = new Date(message.Time).getTime();
+                    if (senderId === student?._id) {
+                        if (!instructorMessageTimestamps[recipientId] || messageTime > instructorMessageTimestamps[recipientId]) {
+                            instructorMessageTimestamps[recipientId] = messageTime;
+                        }
+                    } else if (recipientId === student?._id) {
+                        if (!instructorMessageTimestamps[senderId] || messageTime > instructorMessageTimestamps[senderId]) {
+                            instructorMessageTimestamps[senderId] = messageTime;
+                        }
+                    }
+                });
+                const updatedInstructors = instructors?.map((instructor: any) => ({
+                    ...instructor,
+                    latestMessageTime: instructorMessageTimestamps[instructor._id] || 0,
+                }));
+                const sortedInstructors = updatedInstructors.sort(
+                    (a: any, b: any) => b.latestMessageTime - a.latestMessageTime
+                );
+                console.log(sortedInstructors, 'sorted');
+                setInstructors(sortedInstructors);
+                setSelectedInstructor(sortedInstructors[0]);
+
             } catch (error: any) {
                 if (error.data.message === 'No messages found') {
-                    setMessages({})
+                    setMessages({});
                 }
-                handleError(error.data.message)
+                handleError(error.data.message);
             }
-        }
-        fetchData()
-    }, [data, selectedInstructor]);
+        };
+        fetchData();
+    }, [instructors, fetchAllMessages, studentMessages, handleError, change]);
+
+    useEffect(() => {
+        const fetchMessages = async () => {
+            if (selectedInstructor) {
+                try {
+                    const instructorId = selectedInstructor._id;
+                    const getAllMessages = await fetchAllMessages(instructorId).unwrap();
+                    setMessages(getAllMessages?.group || []);
+                } catch (error: any) {
+                    if (error?.data?.message === 'No messages found') {
+                        setMessages({});
+                    }
+                    handleError(error?.data?.message);
+                }
+            }
+        };
+        fetchMessages();
+    }, [selectedInstructor, fetchAllMessages, handleError, change]);
 
     useEffect(() => {
         const token = Cookies.get('StudentAccessToken')
         socket.emit('authenticate', token)
         socket.on('Authorized', (user) => {
-        
+
             setSender(user)
-            data?.forEach((instructor: any) => {
+            instructors?.forEach((instructor: any) => {
                 const room = `private-${user._id}-${instructor._id}`
                 socket.emit('joinRoom', room)
             })
         })
 
         socket.on('userOnline', (data) => {
-            console.log(data, 'online')
             setOnlineUsers((prev: any) => ({ ...prev, [data.userId]: 'online' }));
         })
 
@@ -93,8 +134,10 @@ export const Chat = () => {
                     TimeforSorting: new Date(message.Time),
                     type: message.type
                 }
+
                 const updatedMessages = [...prevMessages['Messages'] || [], newMessage]
-            
+                setChange(prevChange => !prevChange);
+                setFetchChange(prevChange => !prevChange);
                 return {
                     ...prevMessages,
                     ['Messages']: updatedMessages
@@ -121,7 +164,7 @@ export const Chat = () => {
             socket.off('Unauthorized')
             socket.off('privateMessage')
         }
-    }, [data, Instructors, useFetchEnrolledCoursesTutors, setMessages,socket])
+    }, [instructors, Instructors, useFetchEnrolledCoursesTutors, setMessages, socket,change])
 
     const sendMessage = (recipient: any) => {
         if (message === '') {
@@ -131,8 +174,11 @@ export const Chat = () => {
         const text = message
         const type = 'text'
         socket.emit('privateMessage', { type, sender, recipient, text, room })
+        setChange(prevChange => !prevChange);
+        setFetchChange(prevChange => !prevChange);
         setMessage('')
     }
+
     const onEmojiClick = (emojiObject: EmojiClickData) => {
         setMessage(message + emojiObject.emoji);
     };
@@ -168,6 +214,7 @@ export const Chat = () => {
                 const recipient = selectedInstructor
                 const room = `private-${sender?._id}-${selectedInstructor?._id}`;
                 socket.emit('privateMessage', { type, sender, recipient, text, room });
+                setChange(!change)
             } catch (error) {
                 console.log(error)
             } finally {
@@ -189,7 +236,7 @@ export const Chat = () => {
             .getUserMedia({ audio: true })
             .then((stream) => {
                 const recorder = new MediaRecorder(stream)
-                recorder.ondataavailable = (event)=>{
+                recorder.ondataavailable = (event) => {
                     if (event.data.size > 0) {
                         setAudioChunks((prev) => [...prev, event.data])
                     }
@@ -214,15 +261,29 @@ export const Chat = () => {
             }
         }
     };
-    console.log(messages)
+
+    const getMessagesForInstructor = (instructorId: string): any => {
+        if (Array.isArray(messages.Messages)) {
+            return studentMessages.filter((message: any) => message?.recipient?._id === instructorId);
+        } else {
+            console.error('messages.Messages is not an array:', messages.Messages);
+            return [];
+        }
+    };
+
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    }, [messages]);
     return (
         <>
             <Header />
             <div className="overflow-hidden fixed w-screen shadow-lg ">
                 <Panel />
-                <div className='main mt-4 mb-5'>
-                    <div className="flex flex-col overflow-y-auto lg:flex-row bg-gray-200 shadow-xl rounded-lg border-2 border-gray-300 h-screen sm:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl" style={{ height: '85%' }}>
-                        <div className="flex flex-col border-r-2 lg:w-1/4 sm:max-w-screen-md lg:max-w-full">
+                <div className='main mt-4 mb-5 '>
+                    <div className="flex flex-col overflow-y-auto lg:flex-row bg-gray-200 shadow-xl rounded-lg border-2 border-gray-300 h-screen sm:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl " style={{ height: '85%' }}>
+                        <div className="sm:hidden md:flex flex-col border-r-2 lg:w-1/4 sm:max-w-screen-md lg:max-w-full">
                             <div className="relative w-full lg:w-full p-3 border-b-2 bg-buttonGreen ">
                                 <input
                                     type="text"
@@ -233,23 +294,44 @@ export const Chat = () => {
                                     <FaSearch />
                                 </div>
                             </div>
-                            {data.length ? (
-                                data.map((instructor: any) => (
-                                    <div key={instructor._id} className="flex w-full h-16 border-2 border-gray-300 justify-start items-start p-3" onClick={() => setSelectedInstructor(instructor)}>
-                                        <div className="relative">
-                                            <img src={instructor.profileImage} className="w-12 h-12 rounded-full bg-black" alt={instructor.name} />
-                                            {onlineUsers[instructor?._id] === 'online' && (
-                                                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-700 rounded-full border-2 border-white"></span>
-                                            )}
+                            {Instructors.length ? (
+                                Instructors.map((instructor: any) => {
+                                    const messagesForInstructor = getMessagesForInstructor(instructor._id);
+                                    const lastMessage = messagesForInstructor[messagesForInstructor.length - 1];
+                                    return (
+                                        <div key={instructor._id} className="flex w-full h-16 border-2 border-gray-300 justify-start items-start p-2" onClick={() => setSelectedInstructor(instructor)}>
+                                            <div className="relative">
+                                                <img src={instructor.profileImage} className="w-10 h-10 rounded-full bg-black" alt={instructor.name} />
+                                                {onlineUsers[instructor?._id] === 'online' && (
+                                                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-700 rounded-full border-2 border-white"></span>
+                                                )}
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="ml-4 text-xs font-semibold">{instructor.name}</span> <div className="ml-4 flex flex-col">
+                                                    {lastMessage ? (
+                                                        <>
+                                                            <span className="text-xs text-green-900 font-semibold">
+                                                                last message : {lastMessage?.type === 'text' ? lastMessage?.message : 'File'}
+                                                            </span>
+                                                            <span className="text-xs text-gray-700 font-semibold">
+                                                                {new Date(lastMessage?.Time).toLocaleString()}
+                                                            </span>
+                                                        </>
+                                                    ) : (
+                                                        <span className="text-sm text-gray-500">No messages yet</span>
+                                                    )}
+                                                </div>
+
+                                                {typingStatus[sender?._id] && (
+                                                    <span className="text-sm text-black ml-2 mt-2">
+                                                        Typing...
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
-                                        <span className="ml-4 text-xs font-semibold">{instructor.name}</span>
-                                        {typingStatus[sender?._id] && (
-                                            <span className="text-sm text-black ml-2 mt-2">
-                                                Typing...
-                                            </span>
-                                        )}
-                                    </div>
-                                ))
+                                    )
+
+                                })
                             ) : (
                                 <p className=" flex justify-center text-zinc-700 font-semibold">No messages found !</p>
                             )}
@@ -263,7 +345,7 @@ export const Chat = () => {
                                         <span className="top-10 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
                                     )}
                                 </div>
-                                <div className=" flex flex-col-reverse w-full h-full bg-zinc-900  overflow-y-auto">
+                                <div className=" flex flex-col-reverse w-full h-full bg-zinc-900  overflow-y-auto" ref={chatContainerRef}>
                                     {Object.keys(messages).length > 0 ? (
                                         Object.keys(messages).map((userId, index) => (
                                             <div key={index} className="">
@@ -309,7 +391,7 @@ export const Chat = () => {
                                             <h1>No messages</h1>
                                         </div>
                                     )}
-                                  
+
                                 </div>
                                 <div className=" flex justify-between  items-center  h-14 border-2 border-sky-200 ">
 

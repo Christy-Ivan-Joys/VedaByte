@@ -71,7 +71,7 @@ export class userInteractor implements iUserInteractor {
         return otp
     }
 
-    async allCourses(){
+    async allCourses() {
         const data = await this.repository.coursesData()
         if (data !== null) {
             return data
@@ -241,11 +241,12 @@ export class userInteractor implements iUserInteractor {
     async fetchEnrolledCourses(userId: string) {
 
         const data = await this.repository.allEnrolledCourses(userId)
+        console.log(data)
         if (data?.length) {
             let enrolledCourses: enrolledCourses[] = []
             const courses = data.map((course) => {
                 const coursesPurchased = course.EnrolledCourses.map((course) => {
-                    if(course.status === true){
+                    if (course.status === true) {
                         enrolledCourses.push(course)
                     }
                 })
@@ -295,10 +296,8 @@ export class userInteractor implements iUserInteractor {
 
     async fetchAllMessages(InstructorId: string, studentId: string) {
         const data = await this.repository.getAllMessages(InstructorId, studentId)
-        
+
         if (data.length) {
-            // const sortedData = data.sort((a: any, b: any) => new Date(b.Time).getTime() - new Date(a.Time).getTime())
-            // console.log(sortedData,'sorteddataaaaaa')
             const group = data.reduce((acc: any, message: any) => {
                 const senderId = message?.sender?._id
                 const recipientId = message?.recipient?._id
@@ -309,11 +308,15 @@ export class userInteractor implements iUserInteractor {
                     text: message.message,
                     CurrentUser: senderId === studentId.toString(),
                     Time: getTimeFromDateTime(message.Time),
-                    type: message.type
+                    type: message.type,
+                    sender:message.sender,
+                    recipient:message.recipient
                 })
                 return acc
             }, {})
-            return {group,data}
+            const sortedData = data.sort((a: any, b: any) => new Date(b.Time).getTime() - new Date(a.Time).getTime())
+            console.log(group,'this is group')
+            return { group, sortedData }
         }
         throw new Error('No messages found')
     }
@@ -360,8 +363,8 @@ export class userInteractor implements iUserInteractor {
             return parseInt(course.price)
         }, 0)
         const change = await this.repository.enrollmentsUpdate(data.enrollmentId,
-            {$set: { "EnrolledCourses.$[elem].status": false }},
-            {arrayFilters: [{ "elem.courseId": { $in: data.selectedCourses }}]}
+            { $set: { "EnrolledCourses.$[elem].status": false } },
+            { arrayFilters: [{ "elem.courseId": { $in: data.selectedCourses } }] }
         )
         const userUpdate = await this.repository.update(data.userId,
             {
@@ -395,6 +398,10 @@ export class userInteractor implements iUserInteractor {
             return intent.description === 'Wallet Addition'
         })
         return { transactions: paymentIntents.data, wallet: walletPayments }
+    }
+    async getStudentMessages(studentId: string,instructorIds:[]): Promise<any> {
+        const data = await this.repository.fetchMessagesForStudent(studentId,instructorIds)
+        return data
     }
 }
 

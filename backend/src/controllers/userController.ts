@@ -208,6 +208,7 @@ export default class userController {
     const studentId = req.body.user._id
     try {
       const data = await this.interactor.fetchAllMessages(InstructorId, studentId)
+      console.log(data, 'messages')
       res.status(HttpStatusCodes.OK).json(data)
     } catch (error: any) {
       console.log(error)
@@ -268,7 +269,7 @@ export default class userController {
     } catch (error) {
       console.log(error)
       next(error)
-    }     
+    }
   }
   async onCreateWalletAddIntent(req: Request, res: Response, next: NextFunction) {
 
@@ -280,7 +281,7 @@ export default class userController {
       next(error)
     }
   }
-  async onAddtoWallet(req: Request, res: Response, next: NextFunction){
+  async onAddtoWallet(req: Request, res: Response, next: NextFunction) {
 
     try {
       const amount = req.body.amount
@@ -298,6 +299,17 @@ export default class userController {
       res.status(HttpStatusCodes.OK).json(data)
     } catch (error) {
       next(error)
+    }
+  }
+  async onGetStudentMessages(req: Request, res: Response, next: NextFunction) {
+
+    try {
+      const studentId = req.body.user._id
+      const instructorIds = req.body.uniqueInstructorIds
+      const data = await this.interactor.getStudentMessages(studentId, instructorIds)
+      res.status(HttpStatusCodes.OK).json(data)
+    } catch (error) {
+
     }
   }
 }

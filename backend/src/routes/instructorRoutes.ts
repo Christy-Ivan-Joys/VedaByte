@@ -30,5 +30,5 @@ router.patch('/add-section',InstructorProtect,controller.onAddSection.bind(contr
 router.patch('/delete-section',InstructorProtect,controller.onDeleteSection.bind(controller))
 router.get('dashboard-data',InstructorProtect,controller.onFetchDashboardData.bind(controller))
 router.get('/graph-data',InstructorProtect,controller.onGraphData.bind(controller))
-
+router.get('/instructor-messages',InstructorProtect,controller.onGetInstructorMessages.bind(controller))
 export default router

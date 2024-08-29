@@ -258,3 +258,6 @@ export interface AddSectionModalProps{
   export type WalletModalProps = {
     setAddMoneyModal: (isOpen: boolean) => void;
   };
+  export type WithdrawModalProps = {
+    setWithdrawMoneyModal: (isOpen: boolean) => void;
+  };

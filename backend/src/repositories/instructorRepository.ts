@@ -20,7 +20,7 @@ export class instructorRepository implements instructorRepositoryInterface {
     private studentdb: typeof studentSchema
     private categorydb: typeof categorySchema
     private messagedb: typeof chatSchema
-    private enrollmentdb :typeof enrollmentSchema
+    private enrollmentdb: typeof enrollmentSchema
     constructor() {
         this.db = instructorSchema
         this.coursedb = courseSchema
@@ -64,18 +64,18 @@ export class instructorRepository implements instructorRepositoryInterface {
     }
 
     async update(id: string, data: any): Promise<instructor | any | null> {
-             try {
-                const result = await this.db.findByIdAndUpdate(id, data, { new: true })
-                return result
-             } catch (error) {
-                 console.log(error)
-             }
+        try {
+            const result = await this.db.findByIdAndUpdate(id, data, { new: true })
+            return result
+        } catch (error) {
+            console.log(error)
+        }
     }
-    
-    async fetchStudents(InstructorId: string):Promise<user | any>{
+
+    async fetchStudents(InstructorId: string): Promise<any> {
         const courses = await this.coursedb.find({ InstructorId }).select('_id')
         const courseIds = courses.map(course => course._id)
-        const students = await this.studentdb.find({ enrollments:{ $in: courseIds }})
+        const students = await this.studentdb.find({ enrollments: { $in: courseIds } })
         return students
     }
 
@@ -85,8 +85,7 @@ export class instructorRepository implements instructorRepositoryInterface {
     }
 
     async updateCourse(id: string, data: any) {
-        const result = await this.coursedb.findOneAndUpdate({ _id: id },data,{ new: true })
-        console.log(result)
+        const result = await this.coursedb.findOneAndUpdate({ _id: id }, data, { new: true })
         return result
     }
 
@@ -98,7 +97,7 @@ export class instructorRepository implements instructorRepositoryInterface {
                 { $and: [{ 'sender._id': InstructorId.toString() }, { 'recipient._id': studentId.toString() }] }
             ]
         })
-        
+
         return data
     }
     async courseCounts(courseIds: any): Promise<any> {
@@ -109,32 +108,33 @@ export class instructorRepository implements instructorRepositoryInterface {
             { $group: { _id: "$enrollments", count: { $sum: 1 } } },
             {
                 $lookup: {
-                  from: 'courses',
-                  localField: '_id',
-                  foreignField: '_id',
-                  as: 'course'
+                    from: 'courses',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'course'
                 }
-              },
-              { $unwind: "$course" },
-              {
+            },
+            { $unwind: "$course" },
+            {
                 $project: {
-                  count: 1,
-                  course: 1
+                    count: 1,
+                    course: 1
                 }
-              }
-          ]);
-          return enrollments;
+            }
+        ]);
+        console.log(enrollments,'enrollment')
+        return enrollments;
     }
-   async getEnrollmentDetailsByCourseIds(courseIds: any): Promise<any> {
-         const data = await this.enrollmentdb.aggregate([
-            { 
-                $match: { 'EnrolledCourses.courseId': { $in: courseIds } } 
+    async getEnrollmentDetailsByCourseIds(courseIds: any): Promise<any> {
+        const data = await this.enrollmentdb.aggregate([
+            {
+                $match: { 'EnrolledCourses.courseId': { $in: courseIds } }
             },
-            { 
-                $unwind: "$EnrolledCourses" 
+            {
+                $unwind: "$EnrolledCourses"
             },
-            { 
-                $match: { 'EnrolledCourses.courseId': { $in: courseIds } } 
+            {
+                $match: { 'EnrolledCourses.courseId': { $in: courseIds } }
             },
             {
                 $lookup: {
@@ -144,8 +144,8 @@ export class instructorRepository implements instructorRepositoryInterface {
                     as: 'courseDetails'
                 }
             },
-            { 
-                $unwind: "$courseDetails" 
+            {
+                $unwind: "$courseDetails"
             },
             {
                 $lookup: {
@@ -155,8 +155,8 @@ export class instructorRepository implements instructorRepositoryInterface {
                     as: 'studentDetails'
                 }
             },
-            { 
-                $unwind: "$studentDetails" 
+            {
+                $unwind: "$studentDetails"
 
             },
             {
@@ -167,14 +167,24 @@ export class instructorRepository implements instructorRepositoryInterface {
                     enrollmentDate: "$EnrolledCourses.EnrolledAt",
                     courseId: "$courseDetails._id",
                     title: "$courseDetails.name",
-                    courseImage:"$courseDetails.courseImage",
+                    courseImage: "$courseDetails.courseImage",
                     price: "$courseDetails.price",
                     progress: "$EnrolledCourses.Progress",
                     completed: "$EnrolledCourses.completed",
                     status: "$EnrolledCourses.status"
                 }
             }
-         ]).exec()
-         return data
+        ]).exec()
+        console.log(data,'data')
+        return data
+    }
+    async fetchMessageForInstructor(studentIds: [], instructorId: string): Promise<any> {
+        const data = await this.messagedb.find({
+            $or: [
+                { $and: [{ 'sender._id': instructorId.toString() }, { 'recipient._id': { $in: studentIds } }] },
+                { $and: [{ 'sender._id': { $in:studentIds } }, { 'recipient._id': instructorId.toString() }] }
+            ]
+        });
+        return data
     }
 }    

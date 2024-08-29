@@ -35,5 +35,6 @@ router.post('/cancel-enrollment',protect,controller.onCancelEnrollment.bind(cont
 router.post('/create-wallet-intent',protect,controller.onCreateWalletAddIntent.bind(controller))
 router.post('/add-to-wallet',protect,controller.onAddtoWallet.bind(controller))
 router.get('/wallet-transactions',protect,controller.onGetWalletTransactions.bind(controller))
+router.post('/student-messages',protect,controller.onGetStudentMessages.bind(controller))
 export default router
               

@@ -8,7 +8,7 @@ import { adminSchema } from "../models/adminSchema"
 export const protect = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
      
     let token = req.cookies.StudentAccessToken
-    
+     console.log('token')
     if (!token){
         console.log('no access token')
         return res.status(401).json({ message: 'Access token is required' })

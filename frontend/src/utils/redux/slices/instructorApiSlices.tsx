@@ -125,6 +125,12 @@ export const instructorApiSlices = apiSlice.injectEndpoints({
                 url:`${INSTRUCTOR_URL}/graph-data`,
                 method:'GET',
             })
+        }),
+        instructorMessages:builder.mutation({
+            query:()=>({
+                url:`${INSTRUCTOR_URL}/instructor-messages`,
+                method:'GET'
+            })
         })
     })
 })
@@ -148,6 +154,7 @@ export const {
     useAddSectionMutation,
     useDeleteSectionMutation,
     useDashboardDataMutation,
-    useFetchDataForDashboardMutation
+    useFetchDataForDashboardMutation,
+    useInstructorMessagesMutation   
 
 } = instructorApiSlices

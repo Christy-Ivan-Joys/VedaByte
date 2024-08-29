@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { useFetchEnrolledCoursesMutation } from "../utils/redux/slices/userApiSlices";
+import { useFetchEnrolledCoursesMutation, useMessagesFromStudentMutation } from "../utils/redux/slices/userApiSlices";
 
 export const useFetchEnrolledCoursesTutors = (handleError: (message: any) => void) => {
 
   const [instructors, setInstructors] = useState([]);
   const [fetchEnrolledCourses] = useFetchEnrolledCoursesMutation();
-
+  const [messagesFromStudent] = useMessagesFromStudentMutation()
+  const [studentMessages, setMessages] = useState([])
+  const [fetchChange, setFetchChange] = useState(false)
   useEffect(() => {
     const fetchEnrolledCoursesTutors = async () => {
       try {
@@ -17,11 +19,15 @@ export const useFetchEnrolledCoursesTutors = (handleError: (message: any) => voi
         const uniqueInstructors: any = []
         courses.data.forEach((course: any) => {
           const instructorId = course.courseId.InstructorId._id;
-          if (!uniqueInstructorIds.has(instructorId)){
-            uniqueInstructorIds.add(instructorId);     
+          if (!uniqueInstructorIds.has(instructorId)) {
+            uniqueInstructorIds.add(instructorId);
             uniqueInstructors.push(course.courseId.InstructorId);
           }
         })
+        const instructorIdsArray = Array.from(uniqueInstructorIds);
+
+        const messages = await messagesFromStudent({ uniqueInstructorIds: instructorIdsArray }).unwrap();
+        setMessages(messages)
         setInstructors(uniqueInstructors);
 
       } catch (error: any) {
@@ -38,9 +44,8 @@ export const useFetchEnrolledCoursesTutors = (handleError: (message: any) => voi
     };
 
     fetchEnrolledCoursesTutors();
-  }, [fetchEnrolledCourses, handleError]);
-  console.log(instructors, 'instructors')
-  return instructors;
+  }, [fetchEnrolledCourses, handleError, messagesFromStudent,fetchChange]);
+  return { instructors, studentMessages,setFetchChange };
 };
 
 

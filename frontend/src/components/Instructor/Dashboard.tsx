@@ -8,12 +8,14 @@ import { useFetchDataForDashboardMutation, useFetchEnrolledStudentsMutation } fr
 import InstructorChart from "./InstructorChart"
 import { Link } from "react-router-dom"
 import { useErrorHandler } from "../../pages/Instructor/ErrorBoundary"
+// import CourseStatusChart from "./CourseStatusChart"
 export function Dashboard() {
     const [fetchEnrolledStudents] = useFetchEnrolledStudentsMutation()
     const [fetchDataForDashboard] = useFetchDataForDashboardMutation()
     const instructor = useSelector((state: any) => state.instructorAuth.instructorInfo)
     const [students, setStudents] = useState([])
     const [enrollments, setEnrollments] = useState([])
+    // const [enrollmentDetails,setEnrollmentDetails] = useState([])
     const [total, setTotal] = useState<number>(0)
     const [courses, setCourses] = useState([])
     const handleError = useErrorHandler()
@@ -22,10 +24,13 @@ export function Dashboard() {
             try {
 
                 const students = await fetchEnrolledStudents(instructor._id)
+                console.log(students)
                 setStudents(students?.data)
                 const data = await fetchDataForDashboard(undefined).unwrap()
+                console.log(data)
                 setEnrollments(data.enrollments)
                 setTotal(data.total)
+                // setEnrollmentDetails(data.enrollmentDetails)
                 setCourses(data.instructorCourses)
             } catch (error: any) {
                 handleError(error.data.message)
@@ -36,12 +41,11 @@ export function Dashboard() {
     }, [])
 
     return (
-
         <div className="flex">
             <Sidebar />
             <div className="content">
-                <Header />
-                <div className="m-3">
+                <Header /> 
+                <div className="m-3 ">
                     <p className="font-bold text-xl p-5">Dashboard</p>
                     <div className="flex justify-start gap-10">
                         <Link to='/instructor/courses'>
@@ -69,6 +73,7 @@ export function Dashboard() {
                 </div>
                 <div className="">
                     <InstructorChart courses={enrollments} />
+                    {/* <CourseStatusChart enrollmentDetails={enrollmentDetails} /> */}
                 </div>
             </div>
         </div>

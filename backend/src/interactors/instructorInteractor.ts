@@ -8,6 +8,7 @@ import { Response } from "express";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { getTimeFromDateTime } from "../utils/Helpers/date";
+import { user } from "../entities/userEntity";
 const { ObjectId } = mongoose.Types;
 
 export class instructorInteractor implements instructorInteractorInterface {
@@ -61,8 +62,8 @@ export class instructorInteractor implements instructorInteractorInterface {
         return course
     }
     async allCourses(input: string): Promise<any | Array<course>> {
-        const data:any = await this.repository.fetchCourses(input)
-        const sortedData = data.sort((a:any, b:any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        const data: any = await this.repository.fetchCourses(input)
+        const sortedData = data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         console.log(sortedData)
         return sortedData
     }
@@ -190,17 +191,26 @@ export class instructorInteractor implements instructorInteractorInterface {
     }
 
     async getGraphData(instructorId: string): Promise<any> {
+        
         const instructorCourses: course[] = await this.repository.fetchCourses(instructorId)
         const courseIds = instructorCourses.map(course => course._id)
         const enrollments = await this.repository.courseCounts(courseIds)
         const total = enrollments.reduce((total: number, course: any) => {
             const coursePrice = parseInt(course.course.price)
             const revenue = coursePrice * course.count
-            return total+revenue
-        },0)
+            return total + revenue
+        }, 0)
         const enrollmentDetails = await this.repository.getEnrollmentDetailsByCourseIds(courseIds);
-        return {enrollments,total,instructorCourses,enrollmentDetails}
+        return { enrollments, total, instructorCourses, enrollmentDetails }
     }
-
-}
+    async instructorMessages(instructorId: string): Promise<any> {
+        const data = await this.repository.fetchStudents(instructorId)
+        const students = data
+        const studentIds = students.map((student:user)=> student._id.toString())
+        console.log(studentIds)
+        const messages = await this.repository.fetchMessageForInstructor(studentIds,instructorId)
+        console.log(messages,'instructor messages')
+        return messages
+    }
+}      
 

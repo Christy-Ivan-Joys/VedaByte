@@ -13,11 +13,12 @@ export  interface instructorInteractorInterface{
         fetchEnrolledStudents(InstructorId:string):void
         fetchCategories():void
         editCourse(id:string,data:any):void
-        
         fetchInstructorMessages(studentId:string,InstructorId:string):void
         addQualification(data:any,InstructorId:string):Promise<instructor>
         addCertification(data:any,InstructorId:string):Promise<instructor>
         addNewSection(title:string,description:string,videoURL:string,courseId:string):Promise<course>
         deleteSection(sectionId:string):Promise<course>
         getGraphData(instructorId:string):Promise<any>
+        instructorMessages(instructorId:string):Promise<any>
+        
 }
