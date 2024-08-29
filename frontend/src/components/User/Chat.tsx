@@ -311,7 +311,7 @@ export const Chat = () => {
                                                     {lastMessage ? (
                                                         <>
                                                             <span className="text-xs text-green-900 font-semibold">
-                                                                last message : {lastMessage?.type === 'text' ? lastMessage?.message : 'File'}
+                                                                last message : {lastMessage?.type === 'text' ? `${lastMessage?.message.substring(0,6)}...` : 'File'}
                                                             </span>
                                                             <span className="text-xs text-gray-700 font-semibold">
                                                                 {new Date(lastMessage?.Time).toLocaleString()}
