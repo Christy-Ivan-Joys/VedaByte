@@ -6,7 +6,7 @@ import { Response, Request } from "express";
 import { user } from "../entities/userEntity";
 import { SendMail } from "../utils/generateOtp";
 import { course, instructor } from "../entities/instructorEntity";
-import { Product, cartItem, enrolledCourses } from "../types";
+import { Product, cartItem, enrolledCourses, section } from "../types";
 import { Stripe } from 'stripe'
 import jwt from 'jsonwebtoken'
 import { Types } from "mongoose";
@@ -14,6 +14,7 @@ import { getTimeFromDateTime } from "../utils/Helpers/date";
 import { courseReview } from "../entities/reviewEntity";
 import ErrorResponse from "../utils/Helpers/errorResponse";
 import { HttpStatusCodes } from "../utils/Helpers/errorResponse";
+import { Paginate } from "../utils/Helpers/Pagination";
 
 const secret = process.env.STRIPE_SECRET_KEY as any
 export class userInteractor implements iUserInteractor {
@@ -71,13 +72,39 @@ export class userInteractor implements iUserInteractor {
         return otp
     }
 
-    async allCourses() {
-        const data = await this.repository.coursesData()
-        if (data !== null) {
-            return data
-        } else {
-            throw Error('No courses to show')
+    async allCourses(user: user, pageData: { page: number, limit: number }) {
+        console.log(pageData.limit, pageData.page)
+        const data = await this.repository.coursesData();
+        if (!data) {
+            throw new Error('No courses to show');
         }
+
+        const result: any = data.map((course: any) => {
+            const courseObj = course.toObject();
+            if (!user) {
+                courseObj.module = courseObj.module?.map((section: section) => {
+                    const { videoURL, ...sectionData } = section;
+                    return sectionData;
+                });
+            } else {
+
+                const isEnrolled = user.enrollments.includes(courseObj._id.toString());
+                if (!isEnrolled) {
+                    courseObj.module = courseObj.module?.map((section: section) => {
+                        const { videoURL, ...sectionData } = section;
+                        return sectionData;
+                    });
+                }
+            }
+            return courseObj;
+        });
+
+        if (pageData.page === 0 && pageData.limit === 0) {
+            console.log('working')
+            return result
+        }
+        const paginateData = Paginate(result, pageData.page, pageData.limit)
+        return paginateData
     }
 
     async addNewCartItem(input: any) {
@@ -278,17 +305,24 @@ export class userInteractor implements iUserInteractor {
         const moduleId = data.moduleId
         const progress = data.progress
         const courseId = data.courseId
+        let realProgress: any
         let Enrollment: any
         const enrollments = await this.repository.allEnrolledCourses(userId)
         const update = enrollments?.map((enrollment) => {
             enrollment.EnrolledCourses.map((course: any) => {
                 if (course.courseId._id.toString() === courseId) {
                     Enrollment = enrollment
+                    course.modules.map((section: any) => {
+                        console.log(section, moduleId)
+                        if (section.moduleId.toString() === moduleId) {
+                            realProgress = section.progress
+                        }
+                    })
                 }
             })
         })
-
-        if (Enrollment) {
+        if (Enrollment && progress > realProgress) {
+            console.log('inside')
             const update = await this.repository.updateModuleProgress(Enrollment._id, courseId, moduleId, progress)
             return update
         }
@@ -309,13 +343,13 @@ export class userInteractor implements iUserInteractor {
                     CurrentUser: senderId === studentId.toString(),
                     Time: getTimeFromDateTime(message.Time),
                     type: message.type,
-                    sender:message.sender,
-                    recipient:message.recipient
+                    sender: message.sender,
+                    recipient: message.recipient
                 })
                 return acc
             }, {})
             const sortedData = data.sort((a: any, b: any) => new Date(b.Time).getTime() - new Date(a.Time).getTime())
-            console.log(group,'this is group')
+            console.log(group, 'this is group')
             return { group, sortedData }
         }
         throw new Error('No messages found')
@@ -399,8 +433,8 @@ export class userInteractor implements iUserInteractor {
         })
         return { transactions: paymentIntents.data, wallet: walletPayments }
     }
-    async getStudentMessages(studentId: string,instructorIds:[]): Promise<any> {
-        const data = await this.repository.fetchMessagesForStudent(studentId,instructorIds)
+    async getStudentMessages(studentId: string, instructorIds: []): Promise<any> {
+        const data = await this.repository.fetchMessagesForStudent(studentId, instructorIds)
         return data
     }
 }

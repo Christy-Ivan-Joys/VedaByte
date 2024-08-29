@@ -12,7 +12,7 @@ export interface iUserRepository {
     login(data: any): Promise<user | null>
     findUser(email: string): Promise<user | null | any>
     userDetails(email: string): Promise<user | null | any>
-    coursesData():Promise<course | null>
+    coursesData():Promise<course[] | null>
     addToCart(id:string,studentId:string):Promise<user | null>
     findUserWithId(id:string):Promise<user | null>
     enrollment(data:any):Promise< |null>

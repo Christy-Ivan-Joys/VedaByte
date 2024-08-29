@@ -51,7 +51,12 @@ export default class userController {
   async getCourses(req: Request, res: Response, next: NextFunction) {
     try {
 
-      const data = await this.interactor.allCourses()
+      const user = req.body.studentInfo
+      const page = parseInt(req.query.page as any) ;
+      const limit = parseInt(req.query.limit as any) ;
+      const pageData = {page,limit}
+      console.log(pageData,'pageData')
+      const data = await this.interactor.allCourses(user, pageData)
       return res.status(HttpStatusCodes.OK).json(data)
     } catch (error: any) {
       next(error)

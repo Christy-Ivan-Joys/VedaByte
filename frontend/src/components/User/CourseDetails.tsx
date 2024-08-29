@@ -30,11 +30,11 @@ export const CourseDetails = () => {
     }
 
     const handleVideoClick = () => {
-      setIsVideoModalOpen(true);
+        setIsVideoModalOpen(true);
     };
-  
+
     const closeVideoModal = () => {
-      setIsVideoModalOpen(false);
+        setIsVideoModalOpen(false);
     };
 
     useEffect(() => {
@@ -46,8 +46,13 @@ export const CourseDetails = () => {
         }
 
         const getCourses = async () => {
-            const courses = await fetchCourses(undefined).unwrap()
+            const courses = await fetchCourses({
+                studentInfo,
+                page: '0',
+                limit: '0'
+            }).unwrap()
             if (courses) {
+                console.log(courses)
                 courses.map((course: Course) => {
                     if (course._id === id) {
                         setDetails(course)
@@ -193,11 +198,11 @@ export const CourseDetails = () => {
             </div>
             <VideoModal
                 isOpen={isVideoModalOpen}
-                 videoUrl={details?.Introvideo}
+                videoUrl={details?.Introvideo}
                 onClose={closeVideoModal}
             />
-           <Review course={details}/>
-            <Footer/>
+            <Review course={details} />
+            <Footer />
         </div >
 
     )

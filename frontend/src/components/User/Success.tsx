@@ -22,7 +22,6 @@ export const Success = () => {
             
             if (sessionId && total){
                 const userId = studentInfo._id
-                console.log('worked')
                 const res = await enroll({userId,total})
                 dispatch(setUser({...res.data}))
                 localStorage.removeItem('Total')

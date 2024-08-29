@@ -10,7 +10,7 @@ export interface iUserInteractor {
     createUser(input: any): Promise<user | any>
     userLogin(user:any,res:Response):void
     sendOtp(email:string,req:Request):Promise<string>
-    allCourses(): void
+    allCourses(user:user,pageData:{page:number,limit:number}): void
     addNewCartItem(input:any): void
     checkoutSession(products:cartItem[],userId:string):Promise<string | null>
     enrollCourse(id: string, total: string): void

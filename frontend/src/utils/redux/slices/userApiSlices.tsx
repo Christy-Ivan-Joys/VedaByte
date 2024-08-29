@@ -18,7 +18,6 @@ export const userApiSlices = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: data,
             })
-
         }),
         sendOtp: builder.mutation({
             query: (data) => ({
@@ -28,9 +27,10 @@ export const userApiSlices = apiSlice.injectEndpoints({
             })
         }),
         fetchCourses: builder.mutation({
-            query: () => ({
-                url: `${STUDENT_URL}/courses`,
-                method: 'GET',
+            query: ({studentInfo,page,limit}) => ({
+                url: `${STUDENT_URL}/courses?page=${page}&limit=${limit}`,
+                method: 'POST',
+                body:{studentInfo}
             })
         }),
         addToCart: builder.mutation({
@@ -76,14 +76,12 @@ export const userApiSlices = apiSlice.injectEndpoints({
                 body: data
             })
         }),
-
         verifyStudentRefreshToken: builder.mutation({
             query: () => ({
                 url: `${STUDENT_URL}/verify-rtoken`,
                 method: 'POST',
             })
         }),
-
         removeCartItem: builder.mutation({
             query: (data) => ({
                 url: `${STUDENT_URL}/remove`,
@@ -110,7 +108,6 @@ export const userApiSlices = apiSlice.injectEndpoints({
                 method: 'GET'
             })
         }),
-
         fetchCategories: builder.mutation({
             query: () => ({
                 url: `${STUDENT_URL}/categories`,

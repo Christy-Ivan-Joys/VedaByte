@@ -7,11 +7,13 @@ import { Course, EnrolledCourse, Module } from "../../types";
 import { useRef } from "react";
 import { useCallback } from "react";
 import { useErrorHandler } from "../../pages/User/ErrorBoundary";
+import { useSelector } from "react-redux";
 
 export const Videos = () => {
 
     const { id } = useParams()
     const [fetchCourses] = useFetchCoursesMutation()
+    const studentInfo = useSelector((state: any) => state.userAuth.studentInfo)
     const [course, setCourseData] = useState<Course | null | any>(null)
     const [enrollment, setEnrollment] = useState<EnrolledCourse | null | any>(null)
     const [selectedSection, setSelectedSection] = useState<Module | null>(null)
@@ -21,17 +23,21 @@ export const Videos = () => {
     const [updateSectionProgress] = useUpdateProgressMutation()
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const [fetchEnrolledCourses] = useFetchEnrolledCoursesMutation()
-
+    const [progress,setProgress] = useState(0)
     useEffect(() => {
         const getData = async () => {
             try {
-                const courses = await fetchCourses(undefined).unwrap()
+                const courses = await fetchCourses({
+                    studentInfo,
+                    page:'0',
+                    limit:'0'
+                }).unwrap()
                 const enrolledCourses = await fetchEnrolledCourses(undefined).unwrap()
-                
                 if (enrolledCourses) {
                     const enrolledCourse: EnrolledCourse = enrolledCourses.find((enrollment: any) => {
                         return enrollment.courseId._id === id
                     })
+                    setProgress(enrolledCourse.Progress)
                     setEnrollment(enrolledCourse)
                 }
                 if (courses) {
@@ -52,9 +58,6 @@ export const Videos = () => {
     const handleSelectSection = (section: Module) => {
         setSelectedSection(section)
     }
-
-
-
     const handleTimeUpdate = useCallback((e: any) => {
         setCurrentTime(e.currentTarget.currentTime)
         if (timeoutRef.current) {
@@ -69,13 +72,18 @@ export const Videos = () => {
                     progress: progress,
                 }
                 const update = await updateSectionProgress({ data }).unwrap();
+                update.EnrolledCourses.map((Course:EnrolledCourse)=>{
+                    if(Course.courseId._id === course._id){
+                         setProgress(Course.Progress)
+                    }
+                })
                 console.log('Update Response:', update);
             } catch (error: any) {
                 handleError(error.data.message)
                 console.error('Error updating section progress:', error);
             }
         }, 2000)
-    },[currentTime, duration, selectedSection, updateSectionProgress,]);
+    },[currentTime, duration, selectedSection, updateSectionProgress,progress]);
 
     const handleLoadedMetadata = (event: React.SyntheticEvent<HTMLVideoElement, Event>) => {
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "./Header"
 import { CourseCard } from "./CourseCard";
 import { useFetchCategoriesMutation, useFetchCoursesMutation } from "../../utils/redux/slices/userApiSlices";
@@ -8,17 +8,17 @@ import Modal from "../../pages/User/Modal";
 import { Filter } from "../../Helpers/filters";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import { Paginate } from "../../Helpers/Pagination";
 import '../../styles/course.css'
 import Slideshow from "./Slideshow";
 import Footer from "./Footer";
+import { useSelector } from "react-redux";
 
 
 export const Course = () => {
-
+    
     const [fetchCourses] = useFetchCoursesMutation()
+    const studentInfo = useSelector((state: any) => state.userAuth.studentInfo);
     const [courses, setCoursesData] = useState<any | []>([])
-    const [paginatedCourses, setPaginateCourses] = useState<[]>([])
     const [fetchCategories] = useFetchCategoriesMutation()
     const handleError = useErrorHandler()
     const [categories, setCategories] = useState([])
@@ -28,7 +28,7 @@ export const Course = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [pages, setPages] = useState(0)
     const coursePerPage = 8
-
+    
     const handleFilterChange = (filterType: any, value: any) => {
 
         setFilterOptions((prevOptions) => ({
@@ -45,19 +45,26 @@ export const Course = () => {
         setIsOpen(false)
     }
 
+
     useEffect(() => {
         const getData = async () => {
             try {
-                const Courses = await fetchCourses(undefined).unwrap();
-                if (Courses){
-                    const filteredCourses = Filter(Courses, filterOptions, searchWord);
+                const Courses = await fetchCourses({
+                    studentInfo,
+                    page: currentPage,
+                    limit: coursePerPage
+                }).unwrap();
+
+                if (Courses) {
+                    const filteredCourses = Filter(Courses.paginatedItems, filterOptions, searchWord);
                     setCoursesData(filteredCourses);
+                    setPages(Courses.totalPages);
                 }
             } catch (error: any) {
                 handleError(error?.data?.message);
             }
         };
-    
+
         const getCategories = async () => {
             try {
                 const categories = await fetchCategories(undefined).unwrap();
@@ -66,24 +73,10 @@ export const Course = () => {
                 handleError(error?.data?.message);
             }
         };
-    
+
         getCategories();
         getData();
-    }, [filterOptions, searchWord]);
-    
-    const paginatedData = useMemo(() => {
-        return Paginate(courses, currentPage, coursePerPage);
-    }, [courses, currentPage, coursePerPage]);
-    
-    useEffect(() => {
-        const { paginatedItems, totalPages } = paginatedData;
-        setPaginateCourses(paginatedItems);
-        setPages(totalPages);
-    }, [paginatedData]);
-
-    useEffect(() => {
-        setCoursesData(Filter(courses, filterOptions, searchWord));
-    }, [filterOptions, searchWord])
+    }, [currentPage, filterOptions, searchWord]);
 
     return (
         <div className="overflow-hidden">
@@ -111,11 +104,10 @@ export const Course = () => {
 
             <div className="px-4 sm:px-8 md:px-16 lg:px-24 xl:px-20 mt-8">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4 2xl:grid-cols-4  gap-x-8 gap-y-8 ">
-                    <CourseCard courses={paginatedCourses} />
+                    <CourseCard courses={courses} />
                 </div>
                 <Stack spacing={2} className="pagination-container flex justify-center gap-2 font-semibold mb-10  mt-10 items-center">
                     <Pagination
-
                         color="standard"
                         count={pages}
                         shape="rounded"
@@ -123,8 +115,6 @@ export const Course = () => {
                         onChange={(_,value) => setCurrentPage(value)}
                     />
                 </Stack>
-
-
             </div>
             <Footer />
 

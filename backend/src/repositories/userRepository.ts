@@ -85,7 +85,9 @@ export class userRepository implements iUserRepository {
     }
 
     async coursesData(): Promise<any> {
-        const courses = await this.coursedb.find({ isApproved: 'Approve' }).populate({ path: 'InstructorId' })
+        
+        const courses = await this.coursedb.find({ isApproved: 'Approve' }).
+        populate({ path: 'InstructorId' })
         return courses
     }
 

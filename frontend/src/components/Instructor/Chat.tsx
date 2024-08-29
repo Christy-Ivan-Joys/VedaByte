@@ -68,7 +68,7 @@ export const Chat = () => {
                 const sortedStudents = updatedInstructors.sort(
                     (a: any, b: any) => b.latestMessageTime - a.latestMessageTime
                 );
-                 
+
                 setStudents(sortedStudents)
                 setSelectedStudent(sortedStudents[0])
             }
@@ -81,7 +81,7 @@ export const Chat = () => {
         }
         sinc()
         console.log(change)
-    }, [students, fetchInstructorMessages,change]);
+    }, [students, fetchInstructorMessages, change]);
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -162,7 +162,7 @@ export const Chat = () => {
             socket.off('privateMessage')
         }
 
-    }, [students, handleError, setSender, setMessages, useFetchEnrolledCoursesStudents, socket,change])
+    }, [students, handleError, setSender, setMessages, useFetchEnrolledCoursesStudents, socket, change])
 
     const sendMessage = (recipient: any) => {
         console.log(typingTimeout)
@@ -275,10 +275,9 @@ export const Chat = () => {
             <Sidebar />
 
             <div className="content">
-
                 <Header />
-                <div className="flex flex-col mt-5 overflow-y-auto lg:flex-row bg-gray-200 shadow-xl rounded-lg border-2 border-gray-300 h-screen sm:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl" style={{ height: '90%' }}>
-                    <div className="flex flex-col border-r-2 sm:max-w-screen-md">
+                <div className="flex flex-col overflow-y-auto lg:flex-row bg-gray-200 shadow-xl rounded-lg border-2 border-gray-300 h-screen sm:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl " style={{ height: '85%' }}>
+                    <div className="sm:hidden md:flex flex-col border-r-2 lg:w-1/4 sm:max-w-screen-md lg:max-w-full">
                         <div className="relative w-full p-3 border-b-2 bg-buttonGreen">
                             <input
                                 type="text"
@@ -312,7 +311,7 @@ export const Chat = () => {
                                             {lastMessage ? (
                                                 <>
                                                     <span className="text-xs text-green-900 font-semibold">
-                                                        last message : {lastMessage?.type === 'text' ? `${lastMessage?.message.substring(0,6)}...` : 'File'}
+                                                        last message : {lastMessage?.type === 'text' ? `${lastMessage?.message.substring(0, 6)}...` : 'File'}
                                                     </span>
                                                     <span className="text-xs text-gray-700 font-semibold">
                                                         {new Date(lastMessage?.Time).toLocaleString()}
@@ -353,10 +352,8 @@ export const Chat = () => {
                                         Typing...
                                     </span>
                                 )}
-
                             </div>
-                            <div className="flex flex-col-reverse w-full h-full border-2 bg-zinc-900 border-lime-600 overflow-y-auto">
-
+                            <div className="flex flex-col-reverse w-full  border-2 bg-zinc-900 border-lime-600 overflow-y-auto">
                                 {Object.keys(messages).length > 0 ? (
                                     Object.keys(messages).map((userId, index) => (
                                         <div key={index} className="">
@@ -402,10 +399,8 @@ export const Chat = () => {
                                         <h1>No messages</h1>
                                     </div>
                                 )}
-
                             </div>
                             <div className=" flex justify-between  items-center  h-14 border-2 border-sky-200 ">
-
                                 <button
                                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                                     className="p-2 bg-sky-100 border-2 border-sky-200 transition-transform duration-300 hover:scale-110"
