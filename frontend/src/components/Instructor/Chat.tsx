@@ -139,6 +139,7 @@ export const Chat = () => {
                 }
             })
         })
+        
         socket.on('typing', (data: { userId: string }) => {
             setTypingStatus((prevStatus: any) => ({
                 ...prevStatus,

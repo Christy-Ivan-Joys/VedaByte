@@ -74,7 +74,6 @@ export class userInteractor implements iUserInteractor {
     }
 
     async allCourses(user: user, pageData: { page: number, limit: number }) {
-        console.log(pageData.limit, pageData.page)
         const data = await this.repository.coursesData();
         if (!data) {
             throw new Error('No courses to show');
@@ -82,7 +81,7 @@ export class userInteractor implements iUserInteractor {
 
         const result: any = data.map((course: any) => {
             const courseObj = course.toObject();
-            if (!user) {
+            if (!user || (Object.keys(user).length === 0 && user.constructor === Object)) {
                 courseObj.module = courseObj.module?.map((section: section) => {
                     const { videoURL, ...sectionData } = section;
                     return sectionData;
@@ -94,10 +93,10 @@ export class userInteractor implements iUserInteractor {
                     courseObj.module = courseObj.module?.map((section: section) => {
                         const { videoURL, ...sectionData } = section;
                         return sectionData;
-                    });
+                    });  
                 }
             }
-            return courseObj;
+            return courseObj
         });
 
         if (pageData.page === 0 && pageData.limit === 0) {
@@ -105,6 +104,7 @@ export class userInteractor implements iUserInteractor {
             return result
         }
         const paginateData = Paginate(result, pageData.page, pageData.limit)
+        console.log(paginateData)
         return paginateData
     }
 

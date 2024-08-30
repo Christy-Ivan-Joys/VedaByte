@@ -55,7 +55,6 @@ export default class userController {
       const page = parseInt(req.query.page as any) ;
       const limit = parseInt(req.query.limit as any) ;
       const pageData = {page,limit}
-      console.log(pageData,'pageData')
       const data = await this.interactor.allCourses(user, pageData)
       return res.status(HttpStatusCodes.OK).json(data)
     } catch (error: any) {
