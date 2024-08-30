@@ -160,11 +160,14 @@ export class userInteractor implements iUserInteractor {
             payment_method_types: ["card"],
             line_items: product,
             mode: "payment",
-            success_url: `http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: "http://localhost:3000/success"
+            success_url: process.env.NODE_ENV === 'production'
+                ? 'https://vedabyte.christyivanjoys.live/success?session_id={CHECKOUT_SESSION_ID}'
+                : 'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url: process.env.NODE_ENV === 'production'
+                ? 'https://vedabyte.christyivanjoys.live/cart'
+                : 'http://localhost:3000/cart',
 
         })
-        console.log('session idddd')
         return session.id
 
     }
@@ -174,7 +177,6 @@ export class userInteractor implements iUserInteractor {
             const user = await this.repository.findUserWithId(id)
             const cart = user?.cart
             if (user?.cart.length) {
-                console.log('eroll working')
                 const enrolledCourses = cart?.map(course => {
                     const modules = course.courseId as any
                     return {
@@ -273,7 +275,7 @@ export class userInteractor implements iUserInteractor {
             let enrolledCourses: enrolledCourses[] = []
             const courses = data.map((course) => {
                 const coursesPurchased = course.EnrolledCourses.map((course) => {
-                    if (course.status === true){
+                    if (course.status === true) {
                         enrolledCourses.push(course)
                     }
                 })
