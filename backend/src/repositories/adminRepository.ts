@@ -34,17 +34,17 @@ export class AdminRepository implements AdminRepositoryInterface {
         const data = await this.tutorDB.find()
         return data
     }
-    async userStatus(id: string, status: string) {
+    async userStatus(id: string, status: string,isBlocked:boolean) {
 
-        const update = await this.studentsDB.findByIdAndUpdate(id, { status }, { new: true })
+        const update = await this.studentsDB.findByIdAndUpdate(id, { status,isBlocked}, { new: true })
         return update
 
     }
     async tutorStatus(id: string, status: string) {
-        const update = await this.tutorDB.findByIdAndUpdate(id, { status }, { new: true })
+        const update = await this.tutorDB.findByIdAndUpdate(id, { status}, { new: true })
         return update
-
     }
+
     async allApplications() {
         const applications = await this.courseDB.find({ isApproved: 'pending' }).populate('InstructorId')
         return applications

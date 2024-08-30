@@ -69,6 +69,10 @@ export const ErrorBoundary: React.FC<ChildrenProps> = ({ children }) => {
     const errorHandler = (error: string) => {
         if (error === 'Access token is required' || error === 'Invalid token' || error === 'User not found'){
             setError(error)
+        }else if(error === 'User is blocked'){
+              StudentLogout(dispatch)
+              navigate('/login')
+              toast.error('user is blocked')
         }else{
             return
         }

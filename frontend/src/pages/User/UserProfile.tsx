@@ -94,7 +94,7 @@ export const UserProfile = () => {
 
         } catch (error: any) {
             console.log(error)
-            if (error.data.message === 'Access token is required' || error.data.message === 'User not found' || error.data.message === 'Invalid token') {
+            if (error.data.message === 'Access token is required' || error.data.message === 'User not found' || error.data.message === 'Invalid token'|| error.data.message === 'User is blocked') {
                 handleError(error.data.message)
             } else {
 

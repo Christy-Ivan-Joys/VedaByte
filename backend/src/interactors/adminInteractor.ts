@@ -56,11 +56,12 @@ export class AdminInteractor implements adminInteractorInterface {
 
         if (role === 'Student') {
             if (input.status === 'Active') {
-
-                const status = await this.repository.userStatus(input.id, block)
+                const isBlocked = true
+                const status = await this.repository.userStatus(input.id, block,isBlocked)
                 return status
             } else {
-                const status = await this.repository.userStatus(input.id, unBlock)
+                const isBlocked = false
+                const status = await this.repository.userStatus(input.id, unBlock,isBlocked)
                 return status
             }
         } else {

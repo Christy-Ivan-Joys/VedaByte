@@ -38,7 +38,9 @@ export class userInteractor implements iUserInteractor {
     async userLogin(data: any, res: Response) {
         const existingUser = await this.repository.findUser(data.email)
         const identity = 'Student'
-
+        if (existingUser.isBlocked) {
+            throw new Error('User is blocked')
+        }
         if (existingUser) {
             if (existingUser.googleUserId) {
                 const user: user = await this.repository.findUser(data.email)
@@ -54,7 +56,6 @@ export class userInteractor implements iUserInteractor {
 
                 if (match) {
                     const user: user = await this.repository.findUser(data.email)
-                    console.log(user, 'in user match ')
                     generateToken(res, user._id.toString(), identity)
                     generateRefreshToken(res, user._id.toString(), identity)
                     return { user }
@@ -78,7 +79,6 @@ export class userInteractor implements iUserInteractor {
         if (!data) {
             throw new Error('No courses to show');
         }
-
         const result: any = data.map((course: any) => {
             const courseObj = course.toObject();
             if (!user || (Object.keys(user).length === 0 && user.constructor === Object)) {
@@ -87,24 +87,21 @@ export class userInteractor implements iUserInteractor {
                     return sectionData;
                 });
             } else {
-
                 const isEnrolled = user.enrollments.includes(courseObj._id.toString());
                 if (!isEnrolled) {
                     courseObj.module = courseObj.module?.map((section: section) => {
                         const { videoURL, ...sectionData } = section;
                         return sectionData;
-                    });  
+                    });
                 }
             }
             return courseObj
         });
 
         if (pageData.page === 0 && pageData.limit === 0) {
-            console.log('working')
             return result
         }
         const paginateData = Paginate(result, pageData.page, pageData.limit)
-        console.log(paginateData)
         return paginateData
     }
 
@@ -157,7 +154,7 @@ export class userInteractor implements iUserInteractor {
             quantity: 1
         }))
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2024-04-10' })
-        console.log(process.env.NODE_ENV,process.env.STRIPE_SECRET_KEY)
+        console.log(process.env.NODE_ENV, process.env.STRIPE_SECRET_KEY)
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             line_items: product,
@@ -208,12 +205,9 @@ export class userInteractor implements iUserInteractor {
                 return data
             }
         } catch (error) {
-
             console.log(error, 'error in enrll inter')
-
         }
     }
-
     async passwordChange(newPassword: string, currentPassword: string, userId: string): Promise<user> {
         const user = await this.repository.findUserWithId(userId)
         if (user) {

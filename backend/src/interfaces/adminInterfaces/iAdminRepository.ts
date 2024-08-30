@@ -7,7 +7,7 @@ export interface AdminRepositoryInterface{
         login(data:admin):Promise<admin | null | any>
         allStudents():Promise<user | null | any>
         allTutors():Promise<instructor | any>
-        userStatus(id:any,status:string):Promise< user |any >
+        userStatus(id:any,status:string,isBlocked:boolean):Promise< user |any >
         tutorStatus(id:any,status:string):Promise<instructor |any>
         allApplications():Promise<course | null | any>
         courseApproveOrReject(id:string,action:string):Promise<course | null>
