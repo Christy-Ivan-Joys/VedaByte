@@ -74,7 +74,7 @@ export const Videos = () => {
                 const update = await updateSectionProgress({ data }).unwrap();
                 update.EnrolledCourses.map((Course:EnrolledCourse)=>{
                     if(Course.courseId._id === course._id){
-                         setProgress(Course.Progress)
+                         setProgress(Course?.Progress)
                     }
                 })
                 console.log('Update Response:', update);
