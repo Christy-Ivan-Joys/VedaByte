@@ -174,6 +174,7 @@ export class userInteractor implements iUserInteractor {
             const user = await this.repository.findUserWithId(id)
             const cart = user?.cart
             if (user?.cart.length) {
+                console.log('eroll working')
                 const enrolledCourses = cart?.map(course => {
                     const modules = course.courseId as any
                     return {

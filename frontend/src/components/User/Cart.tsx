@@ -43,7 +43,6 @@ export const Cart = () => {
 
         try {
             const res = await removeCartItem({ itemId })
-            console.log(res)
             dispatch(setUser(res.data))
             setCartItems(res.data.cart)
             toast.success('Item removed')
@@ -67,7 +66,6 @@ export const Cart = () => {
         }, 0)
         setTotal(total)
     }, [setCartItems, cart,studentInfo])
-    console.log(studentInfo,'studentinfoo')
     return (
         <div className="">
 
