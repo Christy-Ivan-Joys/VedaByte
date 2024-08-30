@@ -164,6 +164,7 @@ export default class userController {
 
       const userId = req.body.user._id
       const data = await this.interactor.fetchEnrolledCourses(userId)
+      console.log(data,'this is data')
       res.status(200).json(data)
 
     } catch (error: any) {

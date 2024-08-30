@@ -44,7 +44,7 @@ export class userRepository implements iUserRepository {
     }
 
     async update(id: string, data: any): Promise<user | null | any> {
-        const user = await this.db.findByIdAndUpdate(id, data, { new: true })
+        const user = await this.db.findByIdAndUpdate(id, data, { new: true }).populate('cart.courseId')
         return user
     }
 

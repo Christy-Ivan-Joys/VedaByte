@@ -25,7 +25,6 @@ export const Cart = () => {
             const stripe = await loadStripe(stripeKey)
             const userId = studentInfo._id
             const response = await checkout({ cart, userId }).unwrap()
-            console.log(response)
             if (Total !== 0) {
                 localStorage.setItem('Total', Total.toString())
             }
@@ -41,8 +40,10 @@ export const Cart = () => {
     }
 
     const handleRemoveItem = async (itemId: string) => {
+
         try {
             const res = await removeCartItem({ itemId })
+            console.log(res)
             dispatch(setUser(res.data))
             setCartItems(res.data.cart)
             toast.success('Item removed')
@@ -54,10 +55,9 @@ export const Cart = () => {
     useEffect(() => {
        
         if (studentInfo) {
-            if (studentInfo.cart.length) {
+            if (studentInfo.cart.length){
                 setCartItems(studentInfo.cart)
             } else {
-
                 return
             }
         }
@@ -67,6 +67,7 @@ export const Cart = () => {
         }, 0)
         setTotal(total)
     }, [setCartItems, cart,studentInfo])
+    console.log(studentInfo,'studentinfoo')
     return (
         <div className="">
 
@@ -84,14 +85,14 @@ export const Cart = () => {
                                     <p className="font-semibold text-lg text-zinc-700 "><span className="text-2xl text-zinc-700 text-bold">{`${cart.length}`}</span> Courses in cart</p>
                                 </div>
                             </div>
-                            {cart.map((item) => (
-                                <div className="relative  px-5  p-4">
+                            {cart?.map((item) => (
+                                <div className="relative  px-5  p-4" key={item?.courseId._id}>
                                     <p className="absolute top-2 right-2 text-red-500 cursor-pointer" onClick={() => handleRemoveItem(item.courseId._id)}>  <FaTimes /></p>
                                     <div className="flex justify-between items-center">
-                                        <img src={item.courseId.courseImage} className="w-24 h-14 shadow-md" alt="" />
-                                        <p className="text-md font-semibold text-zinc-700">{item.courseId.name}</p>
+                                        <img src={item?.courseId?.courseImage} className="w-24 h-14 shadow-md" alt="" />
+                                        <p className="text-md font-semibold text-zinc-700">{item?.courseId?.name}</p>
                                         <div className="flex flex-col justify-center items-center px-5 gap-3">
-                                            <p className="text-lg font-semibold text-purple" >₹ {item.courseId.price}</p>
+                                            <p className="text-lg font-semibold text-purple" >₹ {item?.courseId?.price}</p>
                                             <p className="text-sm  underline text-blue-500 cursor-pointer">Details</p>
                                         </div>
                                     </div>

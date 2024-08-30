@@ -268,12 +268,11 @@ export class userInteractor implements iUserInteractor {
     async fetchEnrolledCourses(userId: string) {
 
         const data = await this.repository.allEnrolledCourses(userId)
-        console.log(data)
         if (data?.length) {
             let enrolledCourses: enrolledCourses[] = []
             const courses = data.map((course) => {
                 const coursesPurchased = course.EnrolledCourses.map((course) => {
-                    if (course.status === true) {
+                    if (course.status === true){
                         enrolledCourses.push(course)
                     }
                 })
