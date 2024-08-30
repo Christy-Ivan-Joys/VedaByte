@@ -68,6 +68,7 @@ export function Tutors() {
                         <thead className="bg-zinc-500">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase "></th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase "></th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase ">Name</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase ">Email</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase ">Contact</th>
@@ -77,14 +78,14 @@ export function Tutors() {
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {filteredData.map((tutor, index) => (
-
                                 <tr key={tutor._id}>
                                     <td className="px-6 py-4 text-zinc-900 font-sans font-semibold text-sm whitespace-nowrap">{index + 1}</td>
+                                    <img src={tutor?.profileImage} className="w-10 mt-2 flex justify-center items-center h-10 border-2 rounded-full" alt="" />
                                     <td className="px-6 py-4 text-zinc-900 font-sans font-semibold whitespace-nowrap text-sm">{tutor.name}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">{tutor.email}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap  font-mono">{tutor.contact ? tutor.contact : 'nil'}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">{tutor.status}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap"><button onClick={() => handleChange(tutor._id, tutor.status)} id="block" className={`${tutor.status === 'Active' ? 'bg-green-400' : 'bg-red-400'}  px-5  bg-black rounded-full border-2 `}>{`${tutor.status === 'Active' ? 'block' : 'unblock'}`}</button></td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">{tutor?.email}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap  font-mono">{tutor?.contact ? tutor?.contact : 'nil'}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">{tutor?.status}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap"><button onClick={() => handleChange(tutor?._id, tutor?.status)} id="block" className={`${tutor?.status === 'Active' ? 'bg-green-400' : 'bg-red-400'}  px-5  bg-black rounded-full border-2 `}>{`${tutor?.status === 'Active' ? 'block' : 'unblock'}`}</button></td>
                                 </tr>
 
                             ))}
