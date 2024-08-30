@@ -37,7 +37,8 @@ export const Videos = () => {
                     const enrolledCourse: EnrolledCourse = enrolledCourses.find((enrollment: any) => {
                         return enrollment.courseId._id === id
                     })
-                    setProgress(enrolledCourse.Progress)
+                    console.log(enrolledCourse.Progress,'tnis is the progress')
+                    setProgress(enrolledCourse?.Progress)
                     setEnrollment(enrolledCourse)
                 }
                 if (courses) {
@@ -48,7 +49,7 @@ export const Videos = () => {
                     setSelectedSection(course.module[0])
                 }
             } catch (error: any) {
-                console.log(error)
+                console.log(error,'this is the eroror')
                 handleError(error?.data?.message)
             }
         }
