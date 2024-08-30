@@ -33,10 +33,13 @@ export const Videos = () => {
                     limit:'0'
                 }).unwrap()
                 const enrolledCourses = await fetchEnrolledCourses(undefined).unwrap()
-                if (enrolledCourses) {
+                console.log(enrolledCourses,'this is courses ferch resutl')
+                if (enrolledCourses){
+                    console.log('insideeee')
                     const enrolledCourse: EnrolledCourse = enrolledCourses.find((enrollment: any) => {
                         return enrollment.courseId._id === id
                     })
+                    console.log(enrolledCourse,'this is the course')
                     console.log(enrolledCourse.Progress,'tnis is the progress')
                     setProgress(enrolledCourse?.Progress)
                     setEnrollment(enrolledCourse)
