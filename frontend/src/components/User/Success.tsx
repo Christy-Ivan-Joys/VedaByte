@@ -1,6 +1,6 @@
 import { useEffect} from "react"
 import { FaCheck } from "react-icons/fa"
-import { Link, useLocation } from "react-router-dom"
+import { Link} from "react-router-dom"
 import { useEnrollMutation } from "../../utils/redux/slices/userApiSlices"
 import { useDispatch, useSelector } from "react-redux"
 import { setUser } from "../../utils/redux/slices/userAuthSlice"
@@ -8,18 +8,15 @@ import { setUser } from "../../utils/redux/slices/userAuthSlice"
 
 
 export const Success = () => {
-    const location = useLocation()
     const [enroll] = useEnrollMutation()
     const {studentInfo} = useSelector((state:any)=>state.userAuth)
     const dispatch = useDispatch()
     useEffect(() => {
 
         const handleSuccess = async () => {
-            const query = new URLSearchParams(location.search)
-            console.log(query,'qyery')
+            const query = new URLSearchParams(window.location.search)
             const sessionId = query.get('session_id')
             const total =  localStorage.getItem('Total')
-            console.log(sessionId,total,'sessionid','total')
             if (sessionId && total){
                 const userId = studentInfo._id
                 const res = await enroll({userId,total})
