@@ -15,7 +15,8 @@ import { courseReview } from "../entities/reviewEntity";
 import ErrorResponse from "../utils/Helpers/errorResponse";
 import { HttpStatusCodes } from "../utils/Helpers/errorResponse";
 import { Paginate } from "../utils/Helpers/Pagination";
-
+import dotenv from 'dotenv'
+dotenv.config()
 const secret = process.env.STRIPE_SECRET_KEY as any
 export class userInteractor implements iUserInteractor {
     private repository: iUserRepository;
@@ -156,6 +157,7 @@ export class userInteractor implements iUserInteractor {
             quantity: 1
         }))
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2024-04-10' })
+        console.log(process.env.NODE_ENV,process.env.STRIPE_SECRET_KEY)
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             line_items: product,
@@ -169,7 +171,6 @@ export class userInteractor implements iUserInteractor {
 
         })
         return session.id
-
     }
 
     async enrollCourse(id: string, total: string) {
