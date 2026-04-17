@@ -35,7 +35,7 @@ export class userRepository implements iUserRepository {
     async create({ name, email, contact, password, profileImage, googleUserId, cart, enrollments }: user): Promise<user | null | any> {
 
         try {
-            const newUser = await this.db.create({ name, email, contact, password, profileImage, googleUserId, cart, enrollments })
+            const newUser = await this.db.create({ name, email, contact, password, profileImage, googleUserId: googleUserId ? String(googleUserId) : null, cart, enrollments })
             return newUser
         } catch (error) {
             console.log('error happend in userRepository', error)
@@ -52,6 +52,7 @@ export class userRepository implements iUserRepository {
         const user = await this.db.findByIdAndDelete(id, { new: true }).exec()
         return user
     }
+    
     async login(data: any): Promise<user | null | any> {
 
         const { email, password } = data
@@ -194,18 +195,18 @@ export class userRepository implements iUserRepository {
         }
     }
 
-    async getAllMessages(InstructorId: string, studentId: string): Promise<message[]> {
+    async getAllMessages(InstructorId: string, studentId: string): Promise<any[]> {
 
         const data = await this.messagedb.find({
             $or: [
                 { $and: [{ 'sender._id': studentId.toString() }, { 'recipient._id': InstructorId.toString() }] },
                 { $and: [{ 'sender._id': InstructorId.toString() }, { 'recipient._id': studentId.toString() }] }
             ]
-        })
+        }).lean()
 
         return data
     }
-    async getAllInstructors(): Promise<instructor[]> {
+    async getAllInstructors(): Promise<any[]> {
         const data = await this.instructordb.find({})
         return data
     }

@@ -24,7 +24,7 @@ export function Home() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
-        if (studentInfo.name) {
+        if (studentInfo?.name) {
             setUserExist(true)
         }
         window.addEventListener('scroll', reveal);

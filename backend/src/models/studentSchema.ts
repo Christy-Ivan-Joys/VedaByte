@@ -71,17 +71,19 @@ const studentModel = new mongoose.Schema({
   }         
 })            
 
-studentModel.pre('save', async function (next) {
+studentModel.pre('save', async function () {
   if (!this.isModified('password')) {
-    console.log('is modified false')
-    return next()
+    console.log('is modified false');
+    return;
   }
-  if (!this.password){
-    return
+
+  if (!this.password) {
+    return;
   }
-  const salt = await bcrypt.genSalt(10)
-  this.password = await bcrypt.hash(this.password, salt)
-})
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
 
 export const studentSchema = mongoose.model('Student', studentModel)
 

@@ -49,23 +49,34 @@ export default function Login() {
             navigate('/')
         } catch (error: any) {
             console.log(error)
-            handleError(error.data.message)
+        
             if (error instanceof ZodError) {
                 const validationErrors: ValidationErrors = {}
-                error.errors.forEach((err) => {
-                    validationErrors[err.path[0]] = err.message
+        
+                error.issues.forEach((err) => {
+                    const key = err.path[0]
+        
+                    if (typeof key === "string") {
+                        validationErrors[key] = err.message
+                    }
                 })
+        
                 setErrors(validationErrors)
                 return
+            }
+        
+            setErrors({})
+        
+            const errorMessage = error?.data?.message
+            handleError(errorMessage)
+        
+            if (errorMessage === 'Invalid password') {
+                toast.error('Invalid credentials')
+            } else if (errorMessage === 'User not found') {
+                toast.error('Account not found. Create an account!')
+                navigate('/signup')
             } else {
-                setErrors({})
-                const ErrorMessage = error.data.message
-                if (ErrorMessage === 'Invalid password') {
-                    toast.error('Invalid credentials')
-                } else if (ErrorMessage === 'User not found') {
-                    toast.error('Account not found.create an account!')
-                    navigate('/signup')
-                }
+                toast.error('Something went wrong')
             }
         }
     }

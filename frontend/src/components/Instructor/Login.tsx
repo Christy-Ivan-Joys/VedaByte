@@ -50,23 +50,30 @@ export default function Login() {
             console.log(res, 'res in login')
             dispatch(setInstructor({ ...res }))
             navigate('/instructor/dashboard')
-
         } catch (error: any) {
             console.log(error)
+        
             if (error instanceof ZodError) {
                 const validationErrors: ValidationErrors = {}
-                error.errors.forEach((err) => {
-                    validationErrors[err.path[0]] = err.message
+        
+                error.issues.forEach((err) => {
+                    const key = err.path[0]
+        
+                    if (typeof key === "string") {
+                        validationErrors[key] = err.message
+                    }
                 })
+        
                 console.log(validationErrors, 'validation')
                 setErrors(validationErrors)
                 return
             } else {
                 const ErrorMessage = error?.data?.message
+        
                 if (ErrorMessage === 'Invalid password') {
                     toast.error('Invalid credentials')
                 } else if (ErrorMessage === 'User not found') {
-                    toast.error('Account not found.create an account!')
+                    toast.error('Account not found. Create an account!')
                     navigate('/signup')
                 }
             }

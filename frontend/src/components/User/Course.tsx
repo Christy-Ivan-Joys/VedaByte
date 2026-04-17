@@ -54,8 +54,7 @@ export const Course = () => {
                     page: currentPage,
                     limit: coursePerPage
                 }).unwrap();
-
-                if (Courses) {
+                if (Courses){
                     const filteredCourses = Filter(Courses.paginatedItems, filterOptions, searchWord);
                     setCoursesData(filteredCourses);
                     setPages(Courses.totalPages);

@@ -41,7 +41,7 @@ export class course {
         public readonly Introvideo: string,
         public readonly isApproved: boolean,
         public readonly module: section,
-        public readonly InstructorId: InstructorDetails,
+        public readonly InstructorId: string,
         public readonly createdAt:Date
     ) { }
 }

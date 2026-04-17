@@ -209,7 +209,7 @@ export default class userController {
     }
   }
   async onFetchAllMessages(req: Request, res: Response, next: NextFunction) {
-    const InstructorId = req.params.id
+    const InstructorId = req.params.id as string
     const studentId = req.body.user._id
     try {
       const data = await this.interactor.fetchAllMessages(InstructorId, studentId)
@@ -232,7 +232,7 @@ export default class userController {
 
   async onGetInstructorCourses(req: Request, res: Response, next: NextFunction) {
     try {
-      const InstructorId = req.params.id
+      const InstructorId = req.params.id as string
       const data = await this.interactor.getAllCourses(InstructorId)
       res.status(HttpStatusCodes.OK).json(data)
     } catch (error: any) {
@@ -253,7 +253,7 @@ export default class userController {
 
   async onGetReviews(req: Request, res: Response, next: NextFunction) {
     try {
-      const courseId = req.params.id
+      const courseId = req.params.id as string
       const data = await this.interactor.getCourseReviews(courseId)
       res.status(HttpStatusCodes.OK).json(data)
     } catch (error: any) {

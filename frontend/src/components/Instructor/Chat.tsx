@@ -28,8 +28,8 @@ export const Chat = () => {
     const [Students, setStudents] = useState<any>([])
     const [fetchInstructorMessages] = useFetchInstructorMessagesMutation()
     const [typingStatus, setTypingStatus] = useState<any>({})
-    const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null)
-    const [onlineUsers, setOnlineUsers] = useState<any>({});
+    const [typingTimeout, setTypingTimeout] = useState<ReturnType<typeof setTimeout> | null>(null)
+        const [onlineUsers, setOnlineUsers] = useState<any>({});
     const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
     const [showMediaOptions, setShowMediaOptions] = useState<boolean>(false);
     const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -74,7 +74,7 @@ export const Chat = () => {
                 setSelectedStudent(sortedStudents[0])
             }
             catch (error: any) {
-                if (error.data.message === 'No messages found') {
+                if (error.data.message === 'No messages found'){
                     setMessages({})
                 }
                 console.log(error)

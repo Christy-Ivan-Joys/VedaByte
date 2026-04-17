@@ -7,7 +7,7 @@ import { user } from "../entities/userEntity";
 import { SendMail } from "../utils/generateOtp";
 import { course, instructor } from "../entities/instructorEntity";
 import { Product, cartItem, enrolledCourses, section } from "../types";
-import { Stripe } from 'stripe'
+import Stripe from 'stripe';
 import jwt from 'jsonwebtoken'
 import { Types } from "mongoose";
 import { getTimeFromDateTime } from "../utils/Helpers/date";
@@ -153,7 +153,7 @@ export class userInteractor implements iUserInteractor {
             },
             quantity: 1
         }))
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2024-04-10' })
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2026-03-25.dahlia' })
         console.log(process.env.NODE_ENV, process.env.STRIPE_SECRET_KEY)
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
@@ -405,7 +405,7 @@ export class userInteractor implements iUserInteractor {
         return userUpdate
     }
     async makeWalletIntent(amount: number): Promise<any> {
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2024-04-10' })
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2026-03-25.dahlia' })
         const paymentIntent = await stripe.paymentIntents.create({
             amount,
             currency: 'inr',
@@ -421,7 +421,7 @@ export class userInteractor implements iUserInteractor {
     }
 
     async allWalletTransactions(): Promise<any> {
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2024-04-10' })
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2026-03-25.dahlia' })
         const paymentIntents = await stripe.paymentIntents.list({
 
         })

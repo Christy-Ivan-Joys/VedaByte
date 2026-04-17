@@ -54,27 +54,34 @@ export default function Signup() {
 
         } catch (error: any) {
             if (error instanceof ZodError) {
-                console.log('error in here ')
+                console.log('error in here')
+        
                 const validationErrors: ValidationErrors = {}
-                error.errors.forEach((error) => {
-                    validationErrors[error.path[0]] = error.message
+        
+                error.issues.forEach((err) => {
+                    const key = err.path[0]
+        
+                    if (typeof key === "string") {
+                        validationErrors[key] = err.message
+                    }
                 })
+        
                 setErrors(validationErrors)
-                return          
+                return
             } else {
                 console.log(error)
-                console.log(error.status)
-                const errorData = error.data.message
-                
+                console.log(error?.status)
+        
+                const errorData = error?.data?.message
+        
                 if (errorData === 'User already exist') {
                     toast.error('Email already registered')
-                } else if(error.status == 500) {
-                         console.log('interenal')
-                      navigate('*')
-                }else{
-                    toast.error('An unexpected error occoured')
+                } else if (error?.status === 500) {
+                    console.log('internal')
+                    navigate('*')
+                } else {
+                    toast.error('An unexpected error occurred')
                 }
-
             }
         }
     }

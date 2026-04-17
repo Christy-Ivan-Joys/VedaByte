@@ -54,7 +54,14 @@ export class instructorRepository implements instructorRepositoryInterface {
     }
 
     async addCourse({ _id, category, description, price, courseImage, Introvideo, courselevel, InstructorId, name, module }: course): Promise<any> {
-        const course = await this.coursedb.create({ category, description, price, courselevel, InstructorId, courseImage, Introvideo, name, module })
+        const course = await this.coursedb.create({ category, description, price, courselevel, InstructorId, courseImage, Introvideo, name,   module: Array.isArray(module)
+            ? module.map((m: any) => ({
+                title: m.title,
+                videoURL: m.videoURL,
+                description: m.description,
+                duration: m.duration
+              }))
+            : [] })
         return course
     }
 

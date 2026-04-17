@@ -28,7 +28,7 @@ export const Cart = () => {
             if (Total !== 0) {
                 localStorage.setItem('Total', Total.toString())
             }
-            await stripe?.redirectToCheckout({
+            await (stripe as any)?.redirectToCheckout({
                 sessionId: response.id
             })
         } catch (error: any) {

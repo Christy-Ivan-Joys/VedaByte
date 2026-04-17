@@ -51,18 +51,24 @@ export function Login() {
 
             if (error instanceof ZodError) {
                 const validationErrors: ValidationErrors = {}
-                error.errors.forEach((err) => {
-                    validationErrors[err.path[0]] = err.message
+        
+                error.issues.forEach((err) => {
+                    const key = err.path[0]
+        
+                    if (typeof key === "string") {
+                        validationErrors[key] = err.message
+                    }
                 })
+        
                 setErrors(validationErrors)
                 return
             } else {
                 setErrors({})
-                const errorMessage = error.data.message
+                const errorMessage = error?.data?.message
                 console.log(errorMessage)
+        
                 if (errorMessage === 'Invalid password') {
                     toast.error('Invalid credentials')
-
                 } else if (errorMessage === 'User not found') {
                     toast.error('User not found')
                 }

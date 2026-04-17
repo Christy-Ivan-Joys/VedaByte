@@ -21,7 +21,7 @@ export const Videos = () => {
     const [currentTime, setCurrentTime] = useState(0)
     const [duration, setDuration] = useState(0)
     const [updateSectionProgress] = useUpdateProgressMutation()
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const [fetchEnrolledCourses] = useFetchEnrolledCoursesMutation()
     const [progress,setProgress] = useState(0)
     useEffect(() => {

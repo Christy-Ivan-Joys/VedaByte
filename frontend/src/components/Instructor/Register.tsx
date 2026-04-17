@@ -56,18 +56,24 @@ export default function Register() {
         } catch (error: any) {
             if (error instanceof ZodError) {
                 const validationErrors: ValidationErrors = {}
-                error.errors.forEach((error) => {
-                    validationErrors[error.path[0]] = error.message
-                })
+        
+                error.issues.forEach((err) => {
+                    const key = err.path[0];
+                    if (typeof key === "string") {
+                        validationErrors[key] = err.message;
+                    }
+                });
+        
                 setErrors(validationErrors)
                 return
             } else {
                 setErrors({})
                 const errorMessage = error.data.message
+        
                 if (errorMessage === 'User already exist') {
                     toast.error('Email already registered')
                 } else {
-                    toast.error('An unexpected error occoured')
+                    toast.error('An unexpected error occurred')
                 }
             }
         }

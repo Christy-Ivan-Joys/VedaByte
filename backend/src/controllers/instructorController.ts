@@ -149,7 +149,9 @@ export default class instructorController {
     }
     async onFetchInstructorMessages(req: Request, res: Response, next: NextFunction) {
         try {
-            const studentId = req.params.id
+            const studentId = Array.isArray(req.params.id)
+                ? req.params.id[0]
+                : req.params.id as string;
             const InstructorId = req.body.user._id
             const data = await this.interactor.fetchInstructorMessages(studentId, InstructorId)
             res.status(200).json(data)
@@ -231,7 +233,7 @@ export default class instructorController {
             const instructorId = req.body.user._id
             const data = await this.interactor.instructorMessages(instructorId)
             res.status(HttpStatusCodes.OK).json(data)
-        } catch (error){
+        } catch (error) {
             next(error)
         }
 

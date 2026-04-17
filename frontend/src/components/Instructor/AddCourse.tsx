@@ -208,7 +208,6 @@ const handleSubmit= async(e:any)=>{
                   {hasErrors ? '':    <button onClick={forward} className={`bg-blue-600 text-white w-24 h-8  rounded-full flex justify-center items-center gap-2 fixed`} >
                     Next<FaArrowCircleRight />
                   </button>}
-              
                 </div>
               </div>
             }

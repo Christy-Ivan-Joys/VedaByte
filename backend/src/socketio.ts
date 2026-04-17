@@ -11,12 +11,13 @@ export const socketConfig = (server: any) => {
             methods: ['GET', 'POST']
         }
     })
+
     const onlineUsers:any = {}
     io.on('connection', (socket) => {
         socket.on('authenticate', async (token) => {
             try {
                 const user = await verifyUser(token)
-                if (user.role === 'Student') {
+                if (user.role === 'Student'){
                     socket.student = user
                 } else {
                     socket.instructor = user
