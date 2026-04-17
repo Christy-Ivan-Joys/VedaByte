@@ -14,7 +14,7 @@ import cors from 'cors'
 import errorHandler from './middlewares/errorHandler'
 import { createServer } from 'http'
 import { socketConfig } from './socketio'
-
+  
 declare module "express-session" {
   interface SessionData {
     otp: string;
@@ -26,8 +26,11 @@ const app = express()
 const server = createServer(app)
 
 app.use(express.json())
+
+const allowedOrigins = process.env.CORS_ORIGIN?.split(",");
+
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
