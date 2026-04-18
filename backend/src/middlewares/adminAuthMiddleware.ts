@@ -1,10 +1,9 @@
 
-import { AuthenticatedRequest } from "../types"
 import { NextFunction, Response } from "express"
 import jwt from 'jsonwebtoken'
 import { adminSchema } from "../models/adminSchema"
 
-export const adminProtect = async (req: AuthenticatedRequest, res: Response, next: NextFunction)=>{
+export const adminProtect = async (req: any, res: Response, next: NextFunction)=>{
     let token = req.cookies.AdminAccessToken
     // token=null
     if (!token) {

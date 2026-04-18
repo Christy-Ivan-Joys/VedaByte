@@ -1,24 +1,23 @@
 import {Request}  from 'express'
-import session from 'express-session'
 import { course } from './entities/instructorEntity';
 import mongoose from 'mongoose';
- export interface AuthenticatedRequest extends Request{
-    user?:any
-}
-declare module 'express-session' {
-    interface SessionData {
-      otp: string;
-      token: string;
-      refreshToken:string;
-    }
+import "socket.io";
+
+
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: any;
   }
-declare module 'socket.io'{
-  interface Socket{
-      user ? : string
-      student?:any,
-      instructor?:any
-      }
 }
+
+
+declare module "socket.io/dist/socket" {
+  interface Socket {
+    student?: any;
+    instructor?: any;
+  }
+}
+
   export type Product ={
          courseId:course
   }

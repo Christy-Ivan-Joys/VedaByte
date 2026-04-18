@@ -1,11 +1,10 @@
 
-import { AuthenticatedRequest } from "../types"
 import { NextFunction, Response } from "express"
 import jwt from 'jsonwebtoken'
 import { instructorSchema } from "../models/instructorSchema"
 
 
-export const InstructorProtect = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const InstructorProtect = async (req: any, res: Response, next: NextFunction) => {
     let token = req.cookies.InstructorAccessToken
     console.log(token)
     console.log(req.cookies.InstructorRefreshToken)
