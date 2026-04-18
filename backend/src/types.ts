@@ -2,12 +2,22 @@ export {}
 import { course } from './entities/instructorEntity';
 import mongoose from 'mongoose';
 import "socket.io";
+import "express-session";
+
+declare module "express-session" {
+  interface SessionData {
+    otp?: string;
+    token?: string;
+    refreshToken?: string;
+  }
+}
 
 
-
-declare module "express-serve-static-core" {
-  interface Request {
-    user?: any;
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
   }
 }
 

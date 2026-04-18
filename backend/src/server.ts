@@ -15,12 +15,7 @@ import errorHandler from './middlewares/errorHandler'
 import { createServer } from 'http'
 import { socketConfig } from './socketio'
   
-declare module "express-session" {
-  interface SessionData {
-    otp: string;
-    token: string;
-  }
-}
+
 
 const app = express()
 const server = createServer(app)
