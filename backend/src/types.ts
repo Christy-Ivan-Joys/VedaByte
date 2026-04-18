@@ -4,13 +4,6 @@ import mongoose from 'mongoose';
 import "socket.io";
 import "express-session";
 
-declare module "express-session" {
-  interface SessionData {
-    otp?: string;
-    token?: string;
-    refreshToken?: string;
-  }
-}
 
 
 declare global {
