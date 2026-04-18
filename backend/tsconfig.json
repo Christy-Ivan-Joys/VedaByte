@@ -7,10 +7,6 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
-    "typeRoots": [
-      "node_modules/@types",
-      "src/types"
-    ],
     "outDir": "./dist",
     "rootDir": "./src",
     "resolveJsonModule": true,

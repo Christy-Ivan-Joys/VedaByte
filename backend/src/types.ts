@@ -1,7 +1,8 @@
-import {Request}  from 'express'
+export {}
 import { course } from './entities/instructorEntity';
 import mongoose from 'mongoose';
 import "socket.io";
+
 
 
 declare module "express-serve-static-core" {
@@ -9,7 +10,6 @@ declare module "express-serve-static-core" {
     user?: any;
   }
 }
-
 
 declare module "socket.io/dist/socket" {
   interface Socket {
